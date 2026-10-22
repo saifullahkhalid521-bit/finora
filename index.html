@@ -20,6 +20,7 @@
       <button class="nav-btn active" data-target="dashboard-section">Dashboard</button>
       <button class="nav-btn" data-target="history-section">History</button>
       <button class="nav-btn primary-btn" data-target="form-section">+ Add</button>
+      <button class="nav-btn" data-target="settings-section">Settings</button>
     </nav>
   </header>
 
@@ -192,6 +193,34 @@
         <!-- Submit Button -->
         <button type="submit" class="primary-btn">Save Transaction</button>
       </form>
+    </section>
+
+        <!-- Settings Section -->
+    <section id="settings-section" class="page-section">
+      <h2>Settings & Data</h2>
+      
+      <div class="settings-group">
+        <h3>Backup & Restore</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: var(--space-md);">
+          Export your data regularly to prevent data loss when clearing browser cache.
+        </p>
+        
+        <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+          <button id="export-data-btn" class="primary-btn">Export Backup (JSON)</button>
+          
+          <!-- Hidden file input for Import -->
+          <input type="file" id="import-file-input" accept=".json" style="display: none;">
+          <button id="import-data-btn" class="secondary-btn">Import Backup</button>
+        </div>
+      </div>
+      
+      <div class="settings-group" style="margin-top: var(--space-xl); border-top: 1px solid var(--border-color); padding-top: var(--space-lg);">
+        <h3>Danger Zone</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: var(--space-md);">
+          This will permanently delete all your periods, categories, and transactions.
+        </p>
+        <button id="reset-data-btn" class="secondary-btn" style="color: var(--danger); border-color: var(--danger);">Reset All Data</button>
+      </div>
     </section>
 
   </main>

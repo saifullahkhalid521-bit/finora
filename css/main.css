@@ -459,3 +459,14 @@ body {
 .delete-txn-btn:hover {
   opacity: 1;
 }
+
+/* --- Settings Section --- */
+.settings-group h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+#export-data-btn {
+  white-space: nowrap; /* Text ko ek line mein rakhega */
+  padding: 0.6rem 1.2rem;
+}
