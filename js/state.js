@@ -74,3 +74,16 @@ export function addCategoryAllocation(categoryId, amountPaise) {
   
   commitState(); // Save to localStorage
 }
+
+// Naya custom category add karna
+export function addCustomCategory(name) {
+  const newCategory = {
+    id: generateId('cat'),
+    name: name,
+    builtIn: false
+  };
+  
+  state.categories.push(newCategory);
+  commitState();
+  return newCategory;
+}

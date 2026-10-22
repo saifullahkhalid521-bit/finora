@@ -1,5 +1,5 @@
 // app.js — Entry point
-import { getState, createPeriod, addCategoryAllocation } from './state.js';
+import { getState, createPeriod, addCategoryAllocation , addCustomCategory} from './state.js';
 import { renderDashboard } from './dashboard.js';
 import { parseCurrencyToPaise } from './formatters.js';
 import { getTodayISO } from './dates.js';
@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('start-date').value = getTodayISO();
 
-  // --- Category Form Toggle ---
    // --- Category Form Toggle ---
   toggleCatFormBtn.addEventListener('click', () => {
     if (catFormContainer.style.display === 'none') {
@@ -56,6 +55,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+    // --- New Custom Category Form Submit ---
+  const newCategoryForm = document.getElementById('new-category-form');
+  newCategoryForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nameInput = document.getElementById('new-category-name');
+    const name = nameInput.value.trim();
+
+    if (name) {
+      addCustomCategory(name);
+      nameInput.value = ''; 
+      
+      // Dropdown refresh karne ka simple tarika
+      if (catFormContainer.style.display === 'block') {
+        // Agar form khula hai, toh usko close karke wapas open karo taaki nayi category dikhe
+        toggleCatFormBtn.click(); 
+        toggleCatFormBtn.click(); 
+      }
+    }
+  });
   // --- Category Form Submit ---
   categoryForm.addEventListener('submit', (e) => {
     e.preventDefault();

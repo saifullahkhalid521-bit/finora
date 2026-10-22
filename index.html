@@ -84,6 +84,14 @@
           <button type="button" id="toggle-category-form-btn" class="secondary-btn">+ Allocate Budget</button>
         </div>
 
+                <!-- Naya Custom Category Add Karne ka Form -->
+        <div style="margin-bottom: var(--space-md);">
+          <form id="new-category-form" style="display: flex; gap: var(--space-sm);">
+            <input type="text" id="new-category-name" placeholder="Add custom category (e.g. Travel)" required style="flex: 1; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+            <button type="submit" class="secondary-btn">Add</button>
+          </form>
+        </div>
+
         <!-- Warning for unallocated buffer -->
         <div id="unallocated-warning" class="warning-box" style="display: none;">
           ⚠️ <strong>Unallocated Budget:</strong> <span id="unallocated-amount">₹0.00</span> 
