@@ -10,27 +10,60 @@
 </head>
 <body>
 
-  <header class="app-header">
-    <h1 class="app-title">Finora</h1>
-    <p class="app-subtitle">Personal Money Tracker</p>
+<header class="app-header">
+    <div class="header-brand">
+      <h1 class="app-title">Finora</h1>
+      <p class="app-subtitle">Personal Money Tracker</p>
+    </div>
+    
+    <nav class="app-nav">
+      <button class="nav-btn active" data-target="dashboard-section">Dashboard</button>
+      <button class="nav-btn" data-target="history-section">History</button>
+      <button class="nav-btn primary-btn" data-target="form-section">+ Add</button>
+    </nav>
   </header>
 
   <main class="app-main">
 
-    <!-- Dashboard section — baad mein bharenge -->
-    <section id="dashboard-section" class="page-section">
-      <h2>Dashboard</h2>
-      <p class="placeholder-text">Dashboard yahan aayega.</p>
+    <!-- Dashboard Section -->
+    <section id="dashboard-section" class="page-section active-section">
+      
+      <!-- Hero Card: Total Budget -->
+      <div class="budget-hero">
+        <div class="budget-header">
+          <span class="budget-label">Total Budget</span>
+          <span class="budget-period" id="hero-period">20 Oct - 18 Nov</span>
+        </div>
+        <div class="budget-amount" id="hero-budget-amount">₹0.00</div>
+        
+        <div class="budget-stats">
+          <div class="stat-item">
+            <span class="stat-label">Spent</span>
+            <span class="stat-value danger-text" id="hero-spent">₹0.00</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Remaining</span>
+            <span class="stat-value success-text" id="hero-remaining">₹0.00</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Savings</span>
+            <span class="stat-value" id="hero-savings">₹0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <h2>Category Breakdown</h2>
+      <p class="placeholder-text">Categories yahan aayengi.</p>
     </section>
 
-    <!-- History section — baad mein bharenge -->
-    <section id="history-section" class="page-section" hidden>
+    <!-- History Section -->
+    <section id="history-section" class="page-section">
       <h2>History</h2>
       <p class="placeholder-text">Transaction history yahan aayegi.</p>
     </section>
 
-    <!-- Forms section — baad mein bharenge -->
-    <section id="form-section" class="page-section" hidden>
+    <!-- Form Section -->
+    <section id="form-section" class="page-section">
       <h2>Add Transaction</h2>
       <p class="placeholder-text">Form yahan aayega.</p>
     </section>
