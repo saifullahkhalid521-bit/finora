@@ -1,5 +1,5 @@
 // app.js — Entry point
-import { getState, createPeriod, addCategoryAllocation , addCustomCategory} from './state.js';
+import { getState, createPeriod, addCategoryAllocation , addCustomCategory , addTransaction} from './state.js';
 import { renderDashboard } from './dashboard.js';
 import { parseCurrencyToPaise } from './formatters.js';
 import { getTodayISO } from './dates.js';
@@ -112,6 +112,23 @@ document.addEventListener('DOMContentLoaded', () => {
       newPeriodContainer.style.display = 'none';
       
       renderDashboard(currentPeriod, state.transactions, state.categories);
+
+            // Transaction form fill karo (Date & Categories)
+      const txnDateInput = document.getElementById('txn-date');
+      if (!txnDateInput.value) txnDateInput.value = getTodayISO();
+      
+      const txnCategorySelect = document.getElementById('txn-category');
+      if(txnCategorySelect) {
+        txnCategorySelect.innerHTML = '<option value="">-- Select Category --</option>'; 
+        state.categories.forEach(cat => {
+          if (currentPeriod.categoryAllocations && currentPeriod.categoryAllocations[cat.id]) {
+            const opt = document.createElement('option');
+            opt.value = cat.id;
+            opt.textContent = cat.name;
+            txnCategorySelect.appendChild(opt);
+          }
+        });
+      }
     } else {
       heroCard.style.display = 'none';
       categorySection.style.display = 'none';
@@ -139,6 +156,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial Render
   updateUI();
+
+    // --- Transaction Form Logic ---
+  const txnForm = document.getElementById('transaction-form');
+  const txnTypeSelect = document.getElementById('txn-type');
+  const txnCategoryGroup = document.getElementById('txn-category-group');
+  const txnCategorySelect = document.getElementById('txn-category');
+  
+  if(txnTypeSelect) {
+    // Type Income/Expense change hone pe Category hide/show karo
+    txnTypeSelect.addEventListener('change', (e) => {
+      if (e.target.value === 'income') {
+        txnCategoryGroup.style.display = 'none';
+        txnCategorySelect.removeAttribute('required');
+      } else {
+        txnCategoryGroup.style.display = 'flex';
+        txnCategorySelect.setAttribute('required', 'true');
+      }
+    });
+  }
+
+  if(txnForm) {
+    txnForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const type = txnTypeSelect.value;
+      const amountInput = document.getElementById('txn-amount').value;
+      const categoryId = txnCategorySelect.value;
+      const date = document.getElementById('txn-date').value;
+      const desc = document.getElementById('txn-desc').value;
+
+      // Validation
+      if (type === 'expense' && !categoryId) {
+        alert("Please select a category for expense.");
+        return;
+      }
+
+      const amountPaise = parseCurrencyToPaise(amountInput);
+      if (amountPaise <= 0) {
+        alert("Amount must be greater than 0.");
+        return;
+      }
+
+      // Save to state
+      const success = addTransaction(type, amountPaise, categoryId, date, desc);
+      
+      if (success) {
+        alert("Transaction saved successfully!");
+        txnForm.reset();
+        document.getElementById('txn-date').value = getTodayISO(); // Date reset
+        
+        // Wapas Dashboard pe jao
+        document.querySelector('.nav-btn[data-target="dashboard-section"]').click();
+        updateUI();
+      } else {
+        alert("Error: No active period found.");
+      }
+    });
+  }
 
   // Navigation Logic
   const navBtns = document.querySelectorAll('.nav-btn');

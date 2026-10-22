@@ -87,3 +87,24 @@ export function addCustomCategory(name) {
   commitState();
   return newCategory;
 }
+
+// Naya transaction (income/expense) add karna
+export function addTransaction(type, amountPaise, categoryId, date, description) {
+  const currentPeriod = getCurrentPeriod();
+  if (!currentPeriod) return false;
+
+  const newTxn = {
+    id: generateId('txn'),
+    periodId: currentPeriod.id,
+    type: type, // 'income' ya 'expense'
+    amount: amountPaise,
+    categoryId: type === 'expense' ? categoryId : null,
+    date: date,
+    description: description || '',
+    createdAt: new Date().toISOString()
+  };
+
+  state.transactions.push(newTxn);
+  commitState();
+  return true;
+}
