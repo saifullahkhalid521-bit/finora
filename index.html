@@ -54,6 +54,31 @@
 
       <h2>Category Breakdown</h2>
       <p class="placeholder-text">Categories yahan aayengi.</p>
+
+            <!-- New Period Form (Agar koi active period nahi hai toh dikhega) -->
+      <div id="new-period-container" style="display: none; margin-top: 20px;">
+        <h2>Start New Budget Period</h2>
+        <p>Set your start date and budget. We'll calculate the next 30 days.</p>
+        
+        <form id="new-period-form" class="simple-form">
+          <div class="form-group">
+            <label for="start-date">Start Date</label>
+            <input type="date" id="start-date" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="total-budget">Total Budget (₹)</label>
+            <input type="number" id="total-budget" step="0.01" min="0" placeholder="e.g. 10000" required>
+          </div>
+
+          <div class="form-group">
+            <label for="savings-amount">Savings Allocation (₹) - Optional</label>
+            <input type="number" id="savings-amount" step="0.01" min="0" placeholder="e.g. 2000">
+          </div>
+          
+          <button type="submit" class="primary-btn">Create Period</button>
+        </form>
+      </div>
     </section>
 
     <!-- History Section -->

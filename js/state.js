@@ -1,9 +1,12 @@
 // state.js — App State Manager
 
 import { loadData, saveData } from './storage.js';
+import { calculateEndDate } from './dates.js';
 
-// In-memory copy of the data
+// In-memory copy of the data (sirf ek baar declare hoga)
 let state = loadData();
+
+// --- Core State Functions ---
 
 // Get current state (read-only copy for reading)
 export function getState() {
@@ -29,4 +32,41 @@ export function getCurrentPeriod() {
 // Generate simple unique ID
 export function generateId(prefix = 'id') {
   return `${prefix}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+}
+
+// --- Feature Functions ---
+
+// 1. Naya period banane ka function
+export function createPeriod(startDate, budget, savings) {
+  const newPeriod = {
+    id: generateId('period'),
+    startDate: startDate,
+    endDate: calculateEndDate(startDate),
+    budget: budget,
+    savings: savings,
+    categoryAllocations: {}, // Abhi khaali rakhenge, next task mein categories add karenge
+    createdAt: new Date().toISOString()
+  };
+
+  state.periods.push(newPeriod);
+  state.settings.currentPeriodId = newPeriod.id;
+  
+  commitState(); // Save to localStorage
+  return newPeriod;
+}
+
+// 2. Ek category ko budget allocate karna
+export function addCategoryAllocation(categoryId, amountPaise) {
+  const currentPeriod = getCurrentPeriod();
+  if (!currentPeriod) return;
+
+  // Agar allocations object nahi hai, toh banao
+  if (!currentPeriod.categoryAllocations) {
+    currentPeriod.categoryAllocations = {};
+  }
+
+  // Set the amount
+  currentPeriod.categoryAllocations[categoryId] = amountPaise;
+  
+  commitState();
 }
