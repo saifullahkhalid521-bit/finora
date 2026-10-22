@@ -1,48 +1,23 @@
 // app.js — Entry point
 import { getState } from './state.js';
-import { formatCurrency } from './formatters.js';
-import { 
-  calculatePeriodSpent, 
-  calculateRemainingBudget, 
-  calculateUnallocatedBuffer,
-  calculateCategorySpent,
-  calculateCategoryRemaining
-} from './calculations.js';
+import { renderDashboard } from './dashboard.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Finora loaded");
 
-  // --- TEST SETUP: Fake period and transactions ---
-  const mockPeriod = {
-    id: 'test_period_1',
-    budget: 1000000,  // ₹10,000 in paise
-    savings: 200000,  // ₹2,000
-    categoryAllocations: {
-      'cat_personal': 400000, // ₹4,000
-      'cat_diet': 300000,     // ₹3,000
-      'cat_misc': 100000      // ₹1,000 (Total: ₹8,000)
-    }
-  };
+  // 1. Get current state
+  const state = getState();
+  
+  // 2. Get current active period (agar banaya hai toh)
+  let currentPeriod = null;
+  if (state.settings.currentPeriodId) {
+    currentPeriod = state.periods.find(p => p.id === state.settings.currentPeriodId);
+  }
 
-  const mockTransactions = [
-    { id: 't1', periodId: 'test_period_1', type: 'expense', amount: 150000, categoryId: 'cat_personal' }, // ₹1,500
-    { id: 't2', periodId: 'test_period_1', type: 'expense', amount: 100000, categoryId: 'cat_diet' },     // ₹1,000
-    { id: 't3', periodId: 'test_period_1', type: 'expense', amount: 30000,  categoryId: 'cat_misc' },     // ₹300
-    { id: 't4', periodId: 'test_period_1', type: 'income',  amount: 500000 }                              // ₹5,000 (income)
-  ];
+  // 3. Render Dashboard
+  renderDashboard(currentPeriod, state.transactions);
 
-  console.log("--- CALCULATION TESTS ---");
-  console.log("Total Spent:", formatCurrency(calculatePeriodSpent(mockTransactions, 'test_period_1'))); 
-  
-  console.log("Remaining Budget:", formatCurrency(calculateRemainingBudget(mockPeriod, mockTransactions))); 
-  
-  console.log("Unallocated Buffer:", formatCurrency(calculateUnallocatedBuffer(mockPeriod))); 
-  
-  console.log("Personal Spent:", formatCurrency(calculateCategorySpent(mockTransactions, 'test_period_1', 'cat_personal'))); 
-  
-  console.log("Personal Remaining:", formatCurrency(calculateCategoryRemaining(mockPeriod, mockTransactions, 'cat_personal'))); 
-
-  // Navigation Logic
+  // 4. Navigation Logic
   const navBtns = document.querySelectorAll('.nav-btn');
   const sections = document.querySelectorAll('.page-section');
 
