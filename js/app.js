@@ -1,9 +1,11 @@
 // app.js — Entry point
+import { setupBackup } from './backup.js';
 import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction } from './state.js';
 import { renderDashboard } from './dashboard.js';
 import { renderHistory } from './history.js';
 import { parseCurrencyToPaise } from './formatters.js';
 import { getTodayISO } from './dates.js';
+
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Finora loaded");
@@ -248,5 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
-
+  // --- Setup Backup Buttons ---
+ setupBackup();
 }); // <-- Ye main DOMContentLoaded ka bracket hai
