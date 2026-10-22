@@ -3,10 +3,12 @@
 import { loadData, saveData } from './storage.js';
 import { calculateEndDate } from './dates.js';
 
-// In-memory copy of the data (sirf ek baar declare hoga)
+// In-memory copy of the data
 let state = loadData();
 
-// --- Core State Functions ---
+// ==========================================
+// CORE STATE FUNCTIONS
+// ==========================================
 
 // Get current state (read-only copy for reading)
 export function getState() {
@@ -34,7 +36,9 @@ export function generateId(prefix = 'id') {
   return `${prefix}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 }
 
-// --- Feature Functions ---
+// ==========================================
+// FEATURE FUNCTIONS
+// ==========================================
 
 // 1. Naya period banane ka function
 export function createPeriod(startDate, budget, savings) {
@@ -68,5 +72,5 @@ export function addCategoryAllocation(categoryId, amountPaise) {
   // Set the amount
   currentPeriod.categoryAllocations[categoryId] = amountPaise;
   
-  commitState();
+  commitState(); // Save to localStorage
 }

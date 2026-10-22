@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<header class="app-header">
+  <header class="app-header">
     <div class="header-brand">
       <h1 class="app-title">Finora</h1>
       <p class="app-subtitle">Personal Money Tracker</p>
@@ -28,34 +28,7 @@
     <!-- Dashboard Section -->
     <section id="dashboard-section" class="page-section active-section">
       
-      <!-- Hero Card: Total Budget -->
-      <div class="budget-hero">
-        <div class="budget-header">
-          <span class="budget-label">Total Budget</span>
-          <span class="budget-period" id="hero-period">20 Oct - 18 Nov</span>
-        </div>
-        <div class="budget-amount" id="hero-budget-amount">₹0.00</div>
-        
-        <div class="budget-stats">
-          <div class="stat-item">
-            <span class="stat-label">Spent</span>
-            <span class="stat-value danger-text" id="hero-spent">₹0.00</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Remaining</span>
-            <span class="stat-value success-text" id="hero-remaining">₹0.00</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Savings</span>
-            <span class="stat-value" id="hero-savings">₹0.00</span>
-          </div>
-        </div>
-      </div>
-
-      <h2>Category Breakdown</h2>
-      <p class="placeholder-text">Categories yahan aayengi.</p>
-
-            <!-- New Period Form (Agar koi active period nahi hai toh dikhega) -->
+      <!-- New Period Form (Agar koi active period nahi hai toh dikhega) -->
       <div id="new-period-container" style="display: none; margin-top: 20px;">
         <h2>Start New Budget Period</h2>
         <p>Set your start date and budget. We'll calculate the next 30 days.</p>
@@ -79,6 +52,67 @@
           <button type="submit" class="primary-btn">Create Period</button>
         </form>
       </div>
+
+      <!-- Hero Card: Total Budget (Dikhega jab period banega) -->
+      <div class="budget-hero" style="display: none;">
+        <div class="budget-header">
+          <span class="budget-label">Total Budget</span>
+          <span class="budget-period" id="hero-period"></span>
+        </div>
+        <div class="budget-amount" id="hero-budget-amount">₹0.00</div>
+        
+        <div class="budget-stats">
+          <div class="stat-item">
+            <span class="stat-label">Spent</span>
+            <span class="stat-value danger-text" id="hero-spent">₹0.00</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Remaining</span>
+            <span class="stat-value success-text" id="hero-remaining">₹0.00</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Savings</span>
+            <span class="stat-value" id="hero-savings">₹0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Section -->
+      <div id="category-section" style="display: none;">
+        <div class="category-header">
+          <h2>Category Breakdown</h2>
+          <button type="button" id="toggle-category-form-btn" class="secondary-btn">+ Allocate Budget</button>
+        </div>
+
+        <!-- Warning for unallocated buffer -->
+        <div id="unallocated-warning" class="warning-box" style="display: none;">
+          ⚠️ <strong>Unallocated Budget:</strong> <span id="unallocated-amount">₹0.00</span> 
+          <br><small>You can allocate this to categories or keep it as a buffer.</small>
+        </div>
+
+        <!-- Form to allocate budget to category -->
+        <div id="category-form-container" style="display: none;">
+          <form id="category-form" class="simple-form">
+            <div class="form-group">
+              <label for="category-select">Select Category</label>
+              <select id="category-select" required>
+                <option value="">-- Select --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="category-amount">Allocate Amount (₹)</label>
+              <input type="number" id="category-amount" step="0.01" min="0" placeholder="e.g. 3000" required>
+            </div>
+            <button type="submit" class="primary-btn">Allocate</button>
+          </form>
+        </div>
+
+        <!-- List of category progress bars -->
+        <div id="category-list" class="category-list">
+          <!-- JS se render hoga -->
+        </div>
+      </div>
+
     </section>
 
     <!-- History Section -->

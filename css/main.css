@@ -1,7 +1,5 @@
 /* main.css — main styles (Phase 2.2 mein bharenge) */
 
-/* main.css — Main Styles */
-
 body {
   font-family: var(--font-family);
   background-color: var(--bg-body);
@@ -35,8 +33,8 @@ body {
 
 /* --- Main Layout --- */
 .app-main {
-  flex: 1; /* Footer ko neeche push karta hai */
-  max-width: 900px; /* Desktop pe content zyada failne se rokta hai */
+  flex: 1;
+  max-width: 900px;
   margin: 0 auto;
   width: 100%;
   padding: var(--space-lg) var(--space-md);
@@ -78,7 +76,7 @@ body {
 /* --- Header Navigation --- */
 .app-header {
   display: flex;
-  flex-direction: column; /* Mobile pe stack hoga */
+  flex-direction: column;
   gap: var(--space-md);
   align-items: flex-start;
 }
@@ -87,7 +85,7 @@ body {
   display: flex;
   gap: var(--space-sm);
   width: 100%;
-  overflow-x: auto; /* Chhoti screen pe scroll */
+  overflow-x: auto;
   padding-bottom: var(--space-xs);
 }
 
@@ -96,7 +94,7 @@ body {
   border-radius: var(--radius-md);
   font-weight: 500;
   color: var(--text-secondary);
-  white-space: nowrap; /* Text break na ho */
+  white-space: nowrap;
   transition: background-color 0.2s, color 0.2s;
 }
 
@@ -128,7 +126,7 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-xs);
-  color: #e0e7ff; /* Light indigo */
+  color: #e0e7ff;
 }
 
 .budget-label {
@@ -146,7 +144,7 @@ body {
 }
 
 .budget-amount {
-  font-size: 2.5rem; /* Bada bold heading */
+  font-size: 2.5rem;
   font-weight: 700;
   letter-spacing: -1px;
   margin-bottom: var(--space-lg);
@@ -176,8 +174,8 @@ body {
   font-weight: 600;
 }
 
-.danger-text { color: #fca5a5; } /* Light red */
-.success-text { color: #6ee7b7; } /* Light green */
+.danger-text { color: #fca5a5; }
+.success-text { color: #6ee7b7; }
 
 /* --- Tablet & Desktop Layout --- */
 @media (min-width: 768px) {
@@ -203,11 +201,11 @@ body {
 
 /* --- Section Visibility Logic --- */
 .page-section {
-  display: none; /* Default: sab hidden */
+  display: none;
 }
 
 .page-section.active-section {
-  display: block; /* Sirf active dikhe */
+  display: block;
   animation: fadeIn 0.3s ease-in-out;
 }
 
@@ -236,7 +234,8 @@ body {
   color: var(--text-secondary);
 }
 
-.form-group input {
+.form-group input,
+.form-group select { /* select tag bhi add kiya */
   padding: 0.75rem;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -244,12 +243,14 @@ body {
   color: var(--text-primary);
   font-size: 1rem;
   transition: border-color 0.2s;
+  width: 100%;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); /* Primary color with opacity */
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
 }
 
 @media (min-width: 768px) {
@@ -262,5 +263,152 @@ body {
   .simple-form button {
     grid-column: span 2;
     justify-self: start;
+  }
+}
+
+/* --- Category Management --- */
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.secondary-btn {
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+}
+.secondary-btn:hover {
+  background-color: var(--bg-surface-hover);
+}
+
+.warning-box {
+  background-color: var(--warning-bg);
+  color: #92400e;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  border: 1px solid #fcd34d;
+}
+
+#category-form-container {
+  background-color: var(--bg-body);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  border: 1px solid var(--border-color);
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+/* Individual Category Card */
+.cat-item {
+  border: 1px solid var(--border-color);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+}
+
+.cat-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-xs);
+}
+
+.cat-name {
+  font-weight: 600;
+}
+
+.cat-numbers {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--bg-surface-hover);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.progress-fill.danger {
+  background-color: var(--danger);
+}
+
+/* --- Form Button Full Width (Mobile) --- */
+/* --- Forms --- */
+.simple-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group select {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.simple-form button {
+  width: 100%;
+  margin-top: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+  .simple-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    align-items: end; /* Button ko neeche align karega */
+  }
+  
+  .simple-form button {
+    grid-column: span 2;
+    justify-self: start;
+    width: auto;
+    padding: var(--space-sm) var(--space-lg); /* Button ko thoda bada karega */
   }
 }
