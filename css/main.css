@@ -412,3 +412,50 @@ body {
     padding: var(--space-sm) var(--space-lg); /* Button ko thoda bada karega */
   }
 }
+
+/* --- History Section --- */
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-body);
+  margin-bottom: var(--space-sm);
+}
+
+.history-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.history-item-title {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.history-item-meta {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.history-item-amount {
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+.amount-income { color: var(--success); }
+.amount-expense { color: var(--danger); }
+
+.delete-txn-btn {
+  background: none;
+  color: var(--danger);
+  font-size: 1.25rem;
+  padding: var(--space-xs);
+  cursor: pointer;
+  opacity: 0.5;
+}
+.delete-txn-btn:hover {
+  opacity: 1;
+}

@@ -124,9 +124,26 @@
     </section>
 
     <!-- History Section -->
+        <!-- History Section -->
     <section id="history-section" class="page-section">
-      <h2>History</h2>
-      <p class="placeholder-text">Transaction history yahan aayegi.</p>
+      <div class="category-header" style="margin-top: 0;">
+        <h2>History</h2>
+      </div>
+
+      <!-- Filters -->
+      <div class="history-filters" style="display: flex; gap: var(--space-sm); margin-bottom: var(--space-md); flex-wrap: wrap;">
+        <select id="filter-type" class="secondary-btn" style="flex: 1;">
+          <option value="all">All Types</option>
+          <option value="expense">Expenses</option>
+          <option value="income">Income</option>
+        </select>
+        <input type="text" id="filter-search" placeholder="Search description..." style="flex: 2; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+      </div>
+
+      <!-- Transaction List -->
+      <div id="history-list" class="category-list">
+        <!-- JS se transactions render hongi -->
+      </div>
     </section>
 
     <!-- Form Section -->
@@ -140,8 +157,8 @@
         <div class="form-group">
           <label for="txn-type">Type</label>
           <select id="txn-type" required>
-            <option value="expense">Expense (Kharcha)</option>
-            <option value="income">Income (Aamdani)</option>
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
           </select>
         </div>
 
@@ -169,7 +186,7 @@
         <!-- Description (Optional) -->
         <div class="form-group">
           <label for="txn-desc">Description (Optional)</label>
-          <input type="text" id="txn-desc" placeholder="e.g. Chai aur Samosa">
+          <input type="text" id="txn-desc" placeholder="e.g. Coffee and Snacks">
         </div>
 
         <!-- Submit Button -->
