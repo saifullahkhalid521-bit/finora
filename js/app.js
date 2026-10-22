@@ -1,5 +1,6 @@
 // app.js — Entry point
 import { setupBackup } from './backup.js';
+import { setupTheme } from './theme.js';
 import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction } from './state.js';
 import { renderDashboard } from './dashboard.js';
 import { renderHistory } from './history.js';
@@ -252,4 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   // --- Setup Backup Buttons ---
  setupBackup();
+   // --- Setup Theme ---
+  setupTheme();
 }); // <-- Ye main DOMContentLoaded ka bracket hai

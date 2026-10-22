@@ -49,13 +49,16 @@
 
 /* Future Dark Theme Setup (abhi use nahi hoga, baad mein add karenge) */
 [data-theme="dark"] {
-  --bg-body: #0f172a;
-  --bg-surface: #1e293b;
+  --bg-body: #0f172a;        /* Dark blue background */
+  --bg-surface: #1e293b;     /* Card background */
   --bg-surface-hover: #334155;
   
-  --text-primary: #f8fafc;
+  --text-primary: #f8fafc;   /* White text */
   --text-secondary: #cbd5e1;
   --text-muted: #64748b;
   
   --border-color: #334155;
+  
+  /* Optional: Thoda vibrant dark color */
+  --primary: #6366f1; 
 }
