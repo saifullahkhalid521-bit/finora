@@ -1,6 +1,7 @@
 // app.js — Entry point
-import { getState, createPeriod, addCategoryAllocation , addCustomCategory , addTransaction} from './state.js';
+import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction } from './state.js';
 import { renderDashboard } from './dashboard.js';
+import { renderHistory } from './history.js';
 import { parseCurrencyToPaise } from './formatters.js';
 import { getTodayISO } from './dates.js';
 
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('start-date').value = getTodayISO();
 
-   // --- Category Form Toggle ---
+  // --- Category Form Toggle ---
   toggleCatFormBtn.addEventListener('click', () => {
     if (catFormContainer.style.display === 'none') {
       catFormContainer.style.display = 'block';
@@ -28,10 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const state = getState();
       const currentPeriod = state.periods.find(p => p.id === state.settings.currentPeriodId);
       
-      // Dropdown clear karo
       categorySelect.innerHTML = '<option value="">-- Select --</option>';
       
-      // Fallback: Agar state.categories khaali hai toh default categories use karo
       const catsToUse = (state.categories && state.categories.length > 0) 
         ? state.categories 
         : [
@@ -55,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-    // --- New Custom Category Form Submit ---
+  // --- New Custom Category Form Submit ---
   const newCategoryForm = document.getElementById('new-category-form');
   newCategoryForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -65,15 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (name) {
       addCustomCategory(name);
       nameInput.value = ''; 
-      
-      // Dropdown refresh karne ka simple tarika
       if (catFormContainer.style.display === 'block') {
-        // Agar form khula hai, toh usko close karke wapas open karo taaki nayi category dikhe
         toggleCatFormBtn.click(); 
         toggleCatFormBtn.click(); 
       }
     }
   });
+
   // --- Category Form Submit ---
   categoryForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -87,17 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addCategoryAllocation(catId, amountPaise);
     
-    // Close form & reset
     catFormContainer.style.display = 'none';
     toggleCatFormBtn.textContent = '+ Allocate Budget';
     categoryForm.reset();
-    
-    // Update UI
     updateUI();
   });
 
   // --- Main Update UI Function ---
-  function updateUI() {
+  window.updateUI = function() { // Global banaya taaki listener isko use kar sake
     const state = getState();
     let currentPeriod = null;
     if (state.settings.currentPeriodId) {
@@ -113,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
       
       renderDashboard(currentPeriod, state.transactions, state.categories);
 
-            // Transaction form fill karo (Date & Categories)
       const txnDateInput = document.getElementById('txn-date');
       if (!txnDateInput.value) txnDateInput.value = getTodayISO();
       
@@ -157,14 +150,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial Render
   updateUI();
 
-    // --- Transaction Form Logic ---
+  // --- Transaction Form Logic ---
   const txnForm = document.getElementById('transaction-form');
   const txnTypeSelect = document.getElementById('txn-type');
   const txnCategoryGroup = document.getElementById('txn-category-group');
   const txnCategorySelect = document.getElementById('txn-category');
   
   if(txnTypeSelect) {
-    // Type Income/Expense change hone pe Category hide/show karo
     txnTypeSelect.addEventListener('change', (e) => {
       if (e.target.value === 'income') {
         txnCategoryGroup.style.display = 'none';
@@ -186,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const date = document.getElementById('txn-date').value;
       const desc = document.getElementById('txn-desc').value;
 
-      // Validation
       if (type === 'expense' && !categoryId) {
         alert("Please select a category for expense.");
         return;
@@ -198,15 +189,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Save to state
       const success = addTransaction(type, amountPaise, categoryId, date, desc);
       
       if (success) {
         alert("Transaction saved successfully!");
         txnForm.reset();
-        document.getElementById('txn-date').value = getTodayISO(); // Date reset
+        document.getElementById('txn-date').value = getTodayISO();
         
-        // Wapas Dashboard pe jao
         document.querySelector('.nav-btn[data-target="dashboard-section"]').click();
         updateUI();
       } else {
@@ -215,7 +204,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Navigation Logic
+  // --- History Filters Logic ---
+  document.getElementById('filter-type').addEventListener('change', () => {
+    const state = getState();
+    let currentPeriod = state.periods.find(p => p.id === state.settings.currentPeriodId);
+    if (currentPeriod) renderHistory(state.categories, currentPeriod.id);
+  });
+
+  document.getElementById('filter-search').addEventListener('input', () => {
+    const state = getState();
+    let currentPeriod = state.periods.find(p => p.id === state.settings.currentPeriodId);
+    if (currentPeriod) renderHistory(state.categories, currentPeriod.id);
+  });
+
+  // --- Dashboard update listener ---
+  document.addEventListener('transactionUpdated', () => {
+    updateUI(); 
+  });
+
+  // --- Navigation Logic ---
   const navBtns = document.querySelectorAll('.nav-btn');
   const sections = document.querySelectorAll('.page-section');
 
@@ -226,9 +233,20 @@ document.addEventListener('DOMContentLoaded', () => {
       sections.forEach(sec => sec.classList.remove('active-section'));
       const targetId = btn.getAttribute('data-target');
       const targetSection = document.getElementById(targetId);
+      
       if (targetSection) {
         targetSection.classList.add('active-section');
+        
+        // History tab pe click karne pe naya data render karo
+        if (targetId === 'history-section') {
+          const state = getState();
+          let currentPeriod = state.periods.find(p => p.id === state.settings.currentPeriodId);
+          if (currentPeriod) {
+            renderHistory(state.categories, currentPeriod.id);
+          }
+        }
       }
     });
   });
-});
+
+}); // <-- Ye main DOMContentLoaded ka bracket hai

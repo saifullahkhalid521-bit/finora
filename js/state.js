@@ -108,3 +108,10 @@ export function addTransaction(type, amountPaise, categoryId, date, description)
   commitState();
   return true;
 }
+
+// Transaction delete karna
+export function deleteTransaction(txnId) {
+  // Sirf us ID wali transaction ko hatao
+  state.transactions = state.transactions.filter(txn => txn.id !== txnId);
+  commitState();
+}
