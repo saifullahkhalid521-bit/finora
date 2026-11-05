@@ -61,9 +61,12 @@
 
       <!-- Hero Card -->
       <div class="budget-hero" style="display: none;">
-        <div class="budget-header">
+                <div class="budget-header">
           <span class="budget-label">Total Budget</span>
-          <span class="budget-period" id="hero-period"></span>
+          <div style="display: flex; gap: var(--space-sm); align-items: center;">
+            <span class="budget-period" id="hero-period"></span>
+            <button id="edit-budget-btn" class="secondary-btn" style="padding: 2px 6px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: white; border: none;">✏️ Edit</button>
+          </div>
         </div>
         <div class="budget-amount" id="hero-budget-amount">₹0.00</div>
         
@@ -229,6 +232,46 @@
   <footer class="app-footer">
     <p>Finora v0.1 — Local data only. Please backup regularly.</p>
   </footer>
+
+    <!-- Modal for Editing Total Budget -->
+  <dialog id="edit-budget-modal" class="app-modal">
+    <form id="edit-budget-form" class="simple-form">
+      <h2 style="margin-bottom: var(--space-md);">Edit Budget</h2>
+      
+      <div class="form-group">
+        <label for="edit-budget-amount">Total Budget (₹)</label>
+        <input type="number" id="edit-budget-amount" step="0.01" min="0" required>
+      </div>
+
+      <div class="form-group">
+        <label for="edit-savings-amount">Savings Allocation (₹)</label>
+        <input type="number" id="edit-savings-amount" step="0.01" min="0">
+      </div>
+
+      <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-md);">
+        <button type="submit" class="primary-btn" style="flex: 1;">Save Changes</button>
+        <button type="button" class="secondary-btn" onclick="document.getElementById('edit-budget-modal').close()" style="flex: 1;">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal for Editing Category Budget -->
+  <dialog id="edit-category-modal" class="app-modal">
+    <form id="edit-category-form" class="simple-form">
+      <h2 style="margin-bottom: var(--space-md);">Edit Category Budget</h2>
+      <p id="edit-category-name-display" style="color: var(--text-secondary); margin-bottom: var(--space-md);"></p>
+      
+      <div class="form-group">
+        <label for="edit-category-amount">Allocated Amount (₹)</label>
+        <input type="number" id="edit-category-amount" step="0.01" min="0" required>
+      </div>
+
+      <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-md);">
+        <button type="submit" class="primary-btn" style="flex: 1;">Update</button>
+        <button type="button" class="secondary-btn" onclick="document.getElementById('edit-category-modal').close()" style="flex: 1;">Cancel</button>
+      </div>
+    </form>
+  </dialog>
 
   <script type="module" src="js/app.js"></script>
 

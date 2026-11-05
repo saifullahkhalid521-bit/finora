@@ -543,3 +543,26 @@ input:checked + .slider:before {
 [data-theme="dark"] input:checked + .slider {
   background-color: var(--primary);
 }
+
+/* --- Modals (Edit Popups) --- */
+.app-modal {
+  margin: auto;
+  padding: var(--space-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
+  width: 90%;
+  max-width: 400px;
+}
+
+.app-modal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+.app-modal h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
