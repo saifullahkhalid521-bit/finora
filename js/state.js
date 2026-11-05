@@ -116,3 +116,26 @@ export function deleteTransaction(txnId) {
   state.transactions = state.transactions.filter(txn => txn.id !== txnId);
   commitState();
 }
+
+// Total Budget aur Savings update karna
+export function updatePeriodBudget(budgetPaise, savingsPaise) {
+  const currentPeriod = getCurrentPeriod();
+  if (!currentPeriod) return;
+  
+  currentPeriod.budget = budgetPaise;
+  currentPeriod.savings = savingsPaise;
+  commitState();
+}
+
+// Category allocation update karna
+export function updateCategoryAllocation(categoryId, amountPaise) {
+  const currentPeriod = getCurrentPeriod();
+  if (!currentPeriod) return;
+  
+  if (!currentPeriod.categoryAllocations) {
+    currentPeriod.categoryAllocations = {};
+  }
+  
+  currentPeriod.categoryAllocations[categoryId] = amountPaise;
+  commitState();
+}

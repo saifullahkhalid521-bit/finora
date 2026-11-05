@@ -1,7 +1,7 @@
 // app.js — Entry point
 import { setupBackup } from './backup.js';
 import { setupTheme } from './theme.js';
-import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction } from './state.js';
+import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction, updatePeriodBudget, updateCategoryAllocation } from './state.js';
 import { renderDashboard } from './dashboard.js';
 import { renderHistory } from './history.js';
 import { parseCurrencyToPaise } from './formatters.js';
@@ -257,6 +257,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     });
+  });
+
+    // --- Edit Budget Form Submit ---
+  const editBudgetForm = document.getElementById('edit-budget-form');
+  editBudgetForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newBudgetPaise = parseCurrencyToPaise(document.getElementById('edit-budget-amount').value);
+    const newSavingsPaise = document.getElementById('edit-savings-amount').value ? parseCurrencyToPaise(document.getElementById('edit-savings-amount').value) : 0;
+    
+    if (newBudgetPaise <= 0) {
+      alert("Budget must be greater than 0.");
+      return;
+    }
+    
+    updatePeriodBudget(newBudgetPaise, newSavingsPaise);
+    document.getElementById('edit-budget-modal').close();
+    updateUI();
+  });
+
+  // --- Edit Category Form Submit ---
+  const editCategoryForm = document.getElementById('edit-category-form');
+  editCategoryForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const catId = editCategoryForm.getAttribute('data-cat-id');
+    const newAmountPaise = parseCurrencyToPaise(document.getElementById('edit-category-amount').value);
+    
+    if (!catId || newAmountPaise < 0) {
+      alert("Please enter a valid amount.");
+      return;
+    }
+    
+    updateCategoryAllocation(catId, newAmountPaise);
+    document.getElementById('edit-category-modal').close();
+    updateUI();
   });
   // --- Setup Backup Buttons ---
  setupBackup();
