@@ -136,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
   newPeriodForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const startDate = document.getElementById('start-date').value;
+    const days = parseInt(document.getElementById('period-days').value) || 30; // Days uthaya
     const budgetPaise = parseCurrencyToPaise(document.getElementById('total-budget').value);
     const savingsPaise = document.getElementById('savings-amount').value ? parseCurrencyToPaise(document.getElementById('savings-amount').value) : 0;
 
@@ -143,15 +144,21 @@ document.addEventListener('DOMContentLoaded', () => {
       alert("Budget must be greater than 0");
       return;
     }
+    if (days < 1) {
+      alert("Days must be at least 1.");
+      return;
+    }
 
-    createPeriod(startDate, budgetPaise, savingsPaise);
+    // createPeriod mein days pass kiya
+    createPeriod(startDate, budgetPaise, savingsPaise, days); 
+    
     newPeriodForm.reset();
     document.getElementById('start-date').value = getTodayISO();
+    // Reset days to 30
+    document.getElementById('period-days').value = 30; 
+    
     updateUI();
   });
-
-  // Initial Render
-  updateUI();
 
   // --- Transaction Form Logic ---
   const txnForm = document.getElementById('transaction-form');
@@ -222,8 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Dashboard update listener ---
   document.addEventListener('transactionUpdated', () => {
-    updateUI(); 
   });
+  updateUI(); 
 
   // --- Navigation Logic ---
   const navBtns = document.querySelectorAll('.nav-btn');

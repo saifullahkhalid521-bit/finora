@@ -40,22 +40,23 @@ export function generateId(prefix = 'id') {
 // FEATURE FUNCTIONS
 // ==========================================
 
-// 1. Naya period banane ka function
-export function createPeriod(startDate, budget, savings) {
+// 1. Naya period banane ka function (Ab days bhi accept karega)
+export function createPeriod(startDate, budget, savings, days = 30) {
   const newPeriod = {
     id: generateId('period'),
     startDate: startDate,
-    endDate: calculateEndDate(startDate),
+    endDate: calculateEndDate(startDate, days), // Yahan custom days pass kiya
+    days: days, // Data mein save kar liya taaki history track kar sakein
     budget: budget,
     savings: savings,
-    categoryAllocations: {}, // Abhi khaali rakhenge, next task mein categories add karenge
+    categoryAllocations: {},
     createdAt: new Date().toISOString()
   };
 
   state.periods.push(newPeriod);
   state.settings.currentPeriodId = newPeriod.id;
   
-  commitState(); // Save to localStorage
+  commitState();
   return newPeriod;
 }
 
