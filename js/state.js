@@ -117,6 +117,31 @@ export function deleteTransaction(txnId) {
   commitState();
 }
 
+// Naya savings add/use karna
+export function addSavings(type, amountPaise, date, description, periodId = null) {
+  const newSavings = {
+    id: generateId('sav'),
+    type: type, // 'added' ya 'used'
+    amount: amountPaise,
+    date: date,
+    description: description || '',
+    periodId: periodId,
+    createdAt: new Date().toISOString()
+  };
+  
+  if (!state.savingsLedger) state.savingsLedger = [];
+  state.savingsLedger.push(newSavings);
+  commitState();
+  return newSavings;
+}
+
+// Savings delete karna
+export function deleteSavings(savingsId) {
+  if (!state.savingsLedger) return;
+  state.savingsLedger = state.savingsLedger.filter(s => s.id !== savingsId);
+  commitState();
+}
+
 // Total Budget aur Savings update karna
 export function updatePeriodBudget(budgetPaise, savingsPaise) {
   const currentPeriod = getCurrentPeriod();
