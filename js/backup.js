@@ -89,3 +89,69 @@ export function setupBackup() {
     }
   });
 }
+
+// --- Independent Savings Export/Import/Reset ---
+export function setupSavingsBackup() {
+  const exportBtn = document.getElementById('export-savings-btn');
+  const importBtn = document.getElementById('import-savings-btn');
+  const fileInput = document.getElementById('import-savings-file');
+  const resetBtn = document.getElementById('reset-savings-btn');
+
+  if(!exportBtn) return; 
+
+  // Export
+  exportBtn.addEventListener('click', () => {
+    const state = getState();
+    const savingsData = state.savingsLedger || [];
+    const dataStr = JSON.stringify(savingsData, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const date = new Date().toISOString().split('T')[0];
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `finora-savings-${date}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  // Import
+  importBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsedData = JSON.parse(event.target.result);
+        if (!Array.isArray(parsedData)) {
+          alert("Invalid savings backup format.");
+          return;
+        }
+
+        if (confirm("This will overwrite your current savings history. Are you sure?")) {
+          const state = getState();
+          state.savingsLedger = parsedData;
+          localStorage.setItem('finora_data', JSON.stringify(state));
+          window.location.reload(true);
+        }
+      } catch (error) {
+        alert("Error reading file.");
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  // Reset
+  resetBtn.addEventListener('click', () => {
+    if (confirm("Are you sure you want to delete ALL savings data? This will NOT affect your budget.")) {
+      const state = getState();
+      state.savingsLedger = []; 
+      localStorage.setItem('finora_data', JSON.stringify(state));
+      window.location.reload(true);
+    }
+  });
+}

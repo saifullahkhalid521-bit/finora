@@ -15,7 +15,8 @@ const getDefaultData = () => ({
     { id: 'cat_diet', name: 'Diet', color: '#10b981', builtIn: false },
     { id: 'cat_misc', name: 'Misc', color: '#f59e0b', builtIn: false }
   ],
-  transactions: []
+  transactions: [],
+  savingsLedger: []
 });
 
 // Read data

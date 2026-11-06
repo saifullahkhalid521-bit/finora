@@ -1,12 +1,12 @@
 // app.js — Entry point
-import { setupBackup } from './backup.js';
+import { setupBackup , setupSavingsBackup } from './backup.js';
 import { setupTheme } from './theme.js';
-import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction, updatePeriodBudget, updateCategoryAllocation } from './state.js';
+import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction, updatePeriodBudget, updateCategoryAllocation, addSavings } from './state.js';
 import { renderDashboard } from './dashboard.js';
 import { renderHistory } from './history.js';
-import { parseCurrencyToPaise } from './formatters.js';
+import { renderSavingsPage } from './savings.js';
+import { parseCurrencyToPaise, formatCurrency } from './formatters.js';
 import { getTodayISO } from './dates.js';
-
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Finora loaded");
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- Main Update UI Function ---
-  window.updateUI = function() { // Global banaya taaki listener isko use kar sake
+  window.updateUI = function() { 
     const state = getState();
     let currentPeriod = null;
     if (state.settings.currentPeriodId) {
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
   newPeriodForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const startDate = document.getElementById('start-date').value;
-    const days = parseInt(document.getElementById('period-days').value) || 30; // Days uthaya
+    const days = parseInt(document.getElementById('period-days').value) || 30; 
     const budgetPaise = parseCurrencyToPaise(document.getElementById('total-budget').value);
     const savingsPaise = document.getElementById('savings-amount').value ? parseCurrencyToPaise(document.getElementById('savings-amount').value) : 0;
 
@@ -149,12 +149,10 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // createPeriod mein days pass kiya
     createPeriod(startDate, budgetPaise, savingsPaise, days); 
     
     newPeriodForm.reset();
     document.getElementById('start-date').value = getTodayISO();
-    // Reset days to 30
     document.getElementById('period-days').value = 30; 
     
     updateUI();
@@ -205,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert("Transaction saved successfully!");
         txnForm.reset();
         document.getElementById('txn-date').value = getTodayISO();
-        
         document.querySelector('.nav-btn[data-target="dashboard-section"]').click();
         updateUI();
       } else {
@@ -229,7 +226,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Dashboard update listener ---
   document.addEventListener('transactionUpdated', () => {
+    updateUI(); // <-- Ye wapas add kar diya
   });
+
+  // Initial Render
   updateUI(); 
 
   // --- Navigation Logic ---
@@ -247,19 +247,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (targetSection) {
         targetSection.classList.add('active-section');
         
-        // History tab pe click karne pe naya data render karo
         if (targetId === 'history-section') {
           const state = getState();
           let currentPeriod = state.periods.find(p => p.id === state.settings.currentPeriodId);
-          if (currentPeriod) {
-            renderHistory(state.categories, currentPeriod.id);
-          }
+          if (currentPeriod) renderHistory(state.categories, currentPeriod.id);
+        }
+
+        if (targetId === 'savings-section') {
+          renderSavingsPage();
         }
       }
     });
   });
 
-    // --- Edit Budget Form Submit ---
+  // --- Edit Budget Form Submit ---
   const editBudgetForm = document.getElementById('edit-budget-form');
   editBudgetForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -292,8 +293,76 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('edit-category-modal').close();
     updateUI();
   });
+
   // --- Setup Backup Buttons ---
- setupBackup();
-   // --- Setup Theme ---
+  setupBackup();
+  setupSavingsBackup();
+   
+  // --- Setup Theme ---
   setupTheme();
-}); // <-- Ye main DOMContentLoaded ka bracket hai
+
+  // --- Savings Form Logic ---
+  const savingsModal = document.getElementById('savings-modal');
+  const savingsForm = document.getElementById('savings-form');
+  const savingsModalTitle = document.getElementById('savings-modal-title');
+  let currentSavingsAction = 'added'; 
+
+  document.getElementById('add-savings-btn').addEventListener('click', () => {
+    currentSavingsAction = 'added';
+    savingsModalTitle.textContent = 'Add to Savings';
+    savingsForm.reset();
+    document.getElementById('savings-date-input').value = getTodayISO();
+    savingsModal.showModal();
+  });
+
+  document.getElementById('use-savings-btn').addEventListener('click', () => {
+    currentSavingsAction = 'used';
+    savingsModalTitle.textContent = 'Use Savings';
+    savingsForm.reset();
+    document.getElementById('savings-date-input').value = getTodayISO();
+    savingsModal.showModal();
+  });
+
+  savingsForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const amountPaise = parseCurrencyToPaise(document.getElementById('savings-amount-input').value);
+    const date = document.getElementById('savings-date-input').value;
+    const desc = document.getElementById('savings-desc-input').value;
+
+    if (amountPaise <= 0) {
+      alert("Amount must be greater than 0.");
+      return;
+    }
+
+    if (currentSavingsAction === 'used') {
+      const state = getState();
+      const ledger = state.savingsLedger || [];
+      let added = 0, used = 0;
+      ledger.forEach(i => { if (i.type === 'added') added += i.amount; else used += i.amount; });
+      const available = added - used;
+      
+      if (amountPaise > available) {
+        alert(`You only have ${formatCurrency(available)} available in total savings.`);
+        return;
+      }
+    }
+
+        // Current period ki savings ko bhi update karo
+    const currentPeriod = getState().periods.find(p => p.id === getState().settings.currentPeriodId);
+    if (currentPeriod) {
+      let currentSavings = currentPeriod.savings || 0;
+      if (currentSavingsAction === 'added') {
+        updatePeriodBudget(currentPeriod.budget, currentSavings + amountPaise);
+      } else if (currentSavingsAction === 'used') {
+        const newSavings = Math.max(0, currentSavings - amountPaise);
+        updatePeriodBudget(currentPeriod.budget, newSavings);
+      }
+    }
+
+    addSavings(currentSavingsAction, amountPaise, date, desc);
+    savingsModal.close();
+    renderSavingsPage();
+    updateUI();
+  });
+
+}); // <-- Main DOMContentLoaded end

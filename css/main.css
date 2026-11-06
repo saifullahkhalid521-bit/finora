@@ -613,3 +613,87 @@ select option {
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0); 
 }
+
+
+/* --- Savings Section --- */
+.savings-hero {
+  background: var(--bg-surface);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.savings-hero h2 {
+  font-size: 1.25rem;
+  color: var(--primary);
+  margin-bottom: var(--space-sm);
+  text-transform: uppercase;
+}
+
+.savings-main-amount {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -1px;
+  display: block;
+  margin-bottom: var(--space-md);
+}
+
+.savings-stats-row {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--space-md);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.savings-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-body);
+}
+
+.savings-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.savings-card-title {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.savings-card-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.savings-card-amount {
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.savings-card-amount.add { color: var(--success); }
+.savings-card-amount.use { color: var(--danger); }
+
+.delete-savings-btn {
+  background: none;
+  color: var(--danger);
+  font-size: 1.2rem;
+  padding: 0 var(--space-xs);
+  cursor: pointer;
+  opacity: 0.5;
+}
+.delete-savings-btn:hover {
+  opacity: 1;
+}
