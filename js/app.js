@@ -1,5 +1,5 @@
 // app.js — Entry point
-import { setupBackup } from './backup.js';
+import { setupBackup , setupSavingsBackup } from './backup.js';
 import { setupTheme } from './theme.js';
 import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction, updatePeriodBudget, updateCategoryAllocation, addSavings } from './state.js';
 import { renderDashboard } from './dashboard.js';
@@ -296,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Setup Backup Buttons ---
   setupBackup();
+  setupSavingsBackup();
    
   // --- Setup Theme ---
   setupTheme();
@@ -346,9 +347,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+        // Current period ki savings ko bhi update karo
+    const currentPeriod = getState().periods.find(p => p.id === getState().settings.currentPeriodId);
+    if (currentPeriod) {
+      let currentSavings = currentPeriod.savings || 0;
+      if (currentSavingsAction === 'added') {
+        updatePeriodBudget(currentPeriod.budget, currentSavings + amountPaise);
+      } else if (currentSavingsAction === 'used') {
+        const newSavings = Math.max(0, currentSavings - amountPaise);
+        updatePeriodBudget(currentPeriod.budget, newSavings);
+      }
+    }
+
     addSavings(currentSavingsAction, amountPaise, date, desc);
     savingsModal.close();
     renderSavingsPage();
+    updateUI();
   });
 
 }); // <-- Main DOMContentLoaded end
