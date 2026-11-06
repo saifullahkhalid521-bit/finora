@@ -7,23 +7,44 @@ export function setupBackup() {
   const fileInput = document.getElementById('import-file-input');
   const resetBtn = document.getElementById('reset-data-btn');
 
-  // 1. EXPORT DATA
+    // 1. EXPORT DATA
   exportBtn.addEventListener('click', () => {
+    // Modal open karo aur default naam daalo
+    const modal = document.getElementById('export-backup-modal');
+    const nameInput = document.getElementById('backup-name-input');
+    
+    const date = new Date().toISOString().split('T')[0];
+    nameInput.value = `finora-backup-${date}`; // Default naam
+    
+    modal.showModal();
+  });
+
+  // Modal Form Submit (Jab user download dabaye)
+  const exportForm = document.getElementById('export-backup-form');
+  exportForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const customName = document.getElementById('backup-name-input').value.trim();
+    if (!customName) return;
+
     const data = getState();
     const dataStr = JSON.stringify(data, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     
-    // File name: finora-backup-2026-10-23.json
-    const date = new Date().toISOString().split('T')[0];
+    // File download logic
     const a = document.createElement('a');
     a.href = url;
-    a.download = `finora-backup-${date}.json`;
+    a.download = `${customName}.json`; // Custom name use kiya
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    // Modal band karo
+    document.getElementById('export-backup-modal').close();
   });
+ 
 
   // 2. IMPORT DATA (Trigger file input)
   importBtn.addEventListener('click', () => {
