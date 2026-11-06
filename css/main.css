@@ -566,3 +566,50 @@ input:checked + .slider:before {
   font-size: 1.25rem;
   font-weight: 600;
 }
+
+/* --- Dark Mode Input Fix --- */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  color: #0f172a !important; /* Text ko hamesha dark (black) rakhega */
+  background-color: #ffffff; /* Input ka background hamesha white rakhega */
+}
+
+/* Placeholder text (jo "e.g. 3000" dikhta hai) ko thoda grey karo */
+input::placeholder {
+  color: #64748b !important;
+}
+
+/* Date picker icon ko black dikhne ke liye */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0); 
+}
+
+/* --- Dark Mode Form Inputs & Select Fix --- */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  color: #0f172a !important;          /* Text hamesha black */
+  background-color: #ffffff !important; /* Background hamesha white */
+  border: 1px solid var(--border-color) !important;
+}
+
+/* Placeholder text (e.g. 3000) ko grey dikhane ke liye */
+input::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Dropdown list (options) ka background bhi white aur text black */
+select option {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+}
+
+/* Date picker icon ko dark dikhane ke liye */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0); 
+}
