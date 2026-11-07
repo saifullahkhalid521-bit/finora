@@ -7,19 +7,18 @@ export function setupBackup() {
   const fileInput = document.getElementById('import-file-input');
   const resetBtn = document.getElementById('reset-data-btn');
 
-    // 1. EXPORT DATA
+  // 1. EXPORT DATA
   exportBtn.addEventListener('click', () => {
-    // Modal open karo aur default naam daalo
     const modal = document.getElementById('export-backup-modal');
     const nameInput = document.getElementById('backup-name-input');
     
     const date = new Date().toISOString().split('T')[0];
-    nameInput.value = `finora-backup-${date}`; // Default naam
+    nameInput.value = `finora-backup-${date}`;
     
     modal.showModal();
   });
 
-  // Modal Form Submit (Jab user download dabaye)
+  // Modal Form Submit
   const exportForm = document.getElementById('export-backup-form');
   exportForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -32,26 +31,22 @@ export function setupBackup() {
     const blob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     
-    // File download logic
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${customName}.json`; // Custom name use kiya
+    a.download = `${customName}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    // Modal band karo
     document.getElementById('export-backup-modal').close();
   });
- 
 
-  // 2. IMPORT DATA (Trigger file input)
+  // 2. IMPORT DATA
   importBtn.addEventListener('click', () => {
     fileInput.click();
   });
 
-  // Jab file select ho jaye
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -61,18 +56,15 @@ export function setupBackup() {
       try {
         const parsedData = JSON.parse(event.target.result);
         
-        // Basic Validation check
         if (!parsedData.version || !parsedData.periods) {
           alert("Invalid backup file format.");
           return;
         }
 
         if (confirm("This will overwrite all current data. Are you sure?")) {
-          // State update karo aur save karo
-          // (State ka reference change karna padega, isliye hum direct localStorage update karenge)
           localStorage.setItem('finora_data', JSON.stringify(parsedData));
           alert("Backup imported successfully! Page will reload now.");
-          window.location.reload(); // Refresh taaki naya data load ho
+          window.location.reload();
         }
       } catch (error) {
         alert("Error reading file. Please ensure it's a valid Finora JSON backup.");
@@ -81,11 +73,29 @@ export function setupBackup() {
     reader.readAsText(file);
   });
 
-  // 3. RESET DATA
+  // 3. RESET DATA (Independent from Savings)
   resetBtn.addEventListener('click', () => {
-    if (confirm("Are you absolutely sure? This will delete ALL your financial data permanently.")) {
-      localStorage.removeItem('finora_data');
-      window.location.reload();
+    if (confirm("Are you absolutely sure? This will delete ALL your budget periods, categories, and transactions permanently. Your Savings history will be kept safe.")) {
+      
+      // Data load karo, savings nikaal lo, baaki khaali kar do
+      const currentData = getState();
+      const savingsToKeep = currentData.savingsLedger || [];
+
+      const freshData = {
+        version: 1,
+        settings: { currentPeriodId: null },
+        periods: [],
+        categories: [
+          { id: 'cat_personal', name: 'Personal', builtIn: false },
+          { id: 'cat_diet', name: 'Diet', builtIn: false },
+          { id: 'cat_misc', name: 'Misc', builtIn: false }
+        ],
+        transactions: [],
+        savingsLedger: savingsToKeep 
+      };
+
+      localStorage.setItem('finora_data', JSON.stringify(freshData));
+      window.location.reload(true);
     }
   });
 }
