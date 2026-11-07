@@ -1,4 +1,4 @@
-/* main.css — main styles (Phase 2.2 mein bharenge) */
+/* main.css — Main Styles (Cleaned & Optimized) */
 
 body {
   font-family: var(--font-family);
@@ -9,14 +9,17 @@ body {
   min-height: 100vh;
 }
 
-/* --- Header --- */
+/* ==========================================
+   1. HEADER & NAVIGATION
+   ========================================== */
 .app-header {
   background-color: var(--bg-surface);
   border-bottom: 1px solid var(--border-color);
   padding: var(--space-md) var(--space-lg);
   display: flex;
-  align-items: baseline;
+  flex-direction: column; /* Mobile default */
   gap: var(--space-md);
+  align-items: flex-start;
 }
 
 .app-title {
@@ -31,66 +34,20 @@ body {
   font-size: 0.875rem;
 }
 
-/* --- Main Layout --- */
-.app-main {
-  flex: 1;
-  max-width: 900px;
-  margin: 0 auto;
-  width: 100%;
-  padding: var(--space-lg) var(--space-md);
-}
-
-/* --- Sections (Dashboard, History, Form) --- */
-.page-section {
-  background-color: var(--bg-surface);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-color);
-  margin-bottom: var(--space-lg);
-}
-
-.page-section h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: var(--space-md);
-  color: var(--text-primary);
-}
-
-.placeholder-text {
-  color: var(--text-muted);
-  font-style: italic;
-  padding: var(--space-md) 0;
-}
-
-/* --- Footer --- */
-.app-footer {
-  text-align: center;
-  padding: var(--space-lg);
-  color: var(--text-muted);
-  font-size: 0.875rem;
-  border-top: 1px solid var(--border-color);
-  background-color: var(--bg-surface);
-}
-
-/* --- Header Navigation --- */
-.app-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  align-items: flex-start;
-}
-
 .app-nav {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   width: 100%;
   overflow-x: auto;
   padding-bottom: var(--space-xs);
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
 }
+.app-nav::-webkit-scrollbar { display: none; }
 
 .nav-btn {
-  padding: var(--space-sm) var(--space-md);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
   border-radius: var(--radius-md);
   font-weight: 500;
   color: var(--text-secondary);
@@ -106,101 +63,44 @@ body {
 .primary-btn {
   background-color: var(--primary);
   color: white !important;
+  padding: 10px 20px;
 }
 .primary-btn:hover {
   background-color: var(--primary-hover);
 }
 
-/* --- Budget Hero Card --- */
-.budget-hero {
-  background: linear-gradient(135deg, var(--primary), #3730a3);
-  color: white;
+.secondary-btn {
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.6rem var(--space-md);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  width: 100%; /* Mobile default */
+  text-align: center;
+}
+.secondary-btn:hover {
+  background-color: var(--bg-surface-hover);
+}
+
+/* ==========================================
+   2. MAIN LAYOUT & SECTIONS
+   ========================================== */
+.app-main {
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  padding: var(--space-lg) var(--space-md);
+}
+
+.page-section {
+  background-color: var(--bg-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
-  margin-bottom: var(--space-xl);
-  box-shadow: var(--shadow-md);
-}
-
-.budget-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-xs);
-  color: #e0e7ff;
-}
-
-.budget-label {
-  font-size: 1rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.budget-period {
-  font-size: 0.875rem;
-  background: rgba(255, 255, 255, 0.2);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-}
-
-.budget-amount {
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: -1px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
   margin-bottom: var(--space-lg);
-}
-
-.budget-stats {
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding-top: var(--space-md);
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.stat-label {
-  font-size: 0.75rem;
-  color: #e0e7ff;
-  text-transform: uppercase;
-}
-
-.stat-value {
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-.danger-text { color: #fca5a5; }
-.success-text { color: #6ee7b7; }
-
-/* --- Tablet & Desktop Layout --- */
-@media (min-width: 768px) {
-  .app-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .app-nav {
-    width: auto;
-  }
-
-  .budget-amount {
-    font-size: 3.5rem;
-  }
-
-  .budget-stats {
-    justify-content: flex-start;
-    gap: var(--space-xl);
-  }
-}
-
-/* --- Section Visibility Logic --- */
-.page-section {
   display: none;
 }
 
@@ -214,146 +114,103 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Forms --- */
-.simple-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  margin-top: var(--space-md);
+.page-section h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
 }
 
-.form-group {
+.placeholder-text {
+  color: var(--text-muted);
+  font-style: italic;
+  padding: var(--space-md) 0;
+}
+
+.app-footer {
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+}
+
+/* ==========================================
+   3. DASHBOARD HERO CARD
+   ========================================== */
+.budget-hero {
+  background: linear-gradient(135deg, var(--primary), #3730a3);
+  color: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg) var(--space-md);
+  margin-bottom: var(--space-md);
+  box-shadow: var(--shadow-md);
+}
+
+.budget-header {
+  display: flex;
+  flex-direction: column; /* Mobile default */
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  color: #e0e7ff;
+}
+
+.budget-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.budget-period {
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.budget-amount {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: var(--space-md);
+}
+
+.budget-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: var(--space-md);
+}
+
+.stat-item {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+  flex: 1;
+  min-width: 80px;
 }
 
-.form-group label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-secondary);
+.stat-label {
+  font-size: 0.65rem;
+  color: #e0e7ff;
+  text-transform: uppercase;
 }
 
-.form-group input,
-.form-group select { /* select tag bhi add kiya */
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background-color: var(--bg-body);
-  color: var(--text-primary);
+.stat-value {
   font-size: 1rem;
-  transition: border-color 0.2s;
-  width: 100%;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-}
-
-@media (min-width: 768px) {
-  .simple-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-md);
-  }
-  
-  .simple-form button {
-    grid-column: span 2;
-    justify-self: start;
-  }
-}
-
-/* --- Category Management --- */
-.category-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-md);
-  margin-top: var(--space-lg);
-}
-
-.secondary-btn {
-  background-color: var(--bg-body);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-md);
-  font-weight: 500;
-}
-.secondary-btn:hover {
-  background-color: var(--bg-surface-hover);
-}
-
-.warning-box {
-  background-color: var(--warning-bg);
-  color: #92400e;
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-md);
-  border: 1px solid #fcd34d;
-}
-
-#category-form-container {
-  background-color: var(--bg-body);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-lg);
-  border: 1px solid var(--border-color);
-}
-
-.category-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  margin-top: var(--space-md);
-}
-
-/* Individual Category Card */
-.cat-item {
-  border: 1px solid var(--border-color);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-}
-
-.cat-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: var(--space-xs);
-}
-
-.cat-name {
   font-weight: 600;
 }
 
-.cat-numbers {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
+.danger-text { color: #fca5a5; }
+.success-text { color: #6ee7b7; }
 
-.progress-track {
-  width: 100%;
-  height: 8px;
-  background-color: var(--bg-surface-hover);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background-color: var(--primary);
-  border-radius: var(--radius-full);
-  transition: width 0.3s ease;
-}
-
-.progress-fill.danger {
-  background-color: var(--danger);
-}
-
-/* --- Form Button Full Width (Mobile) --- */
-/* --- Forms --- */
+/* ==========================================
+   4. FORMS & INPUTS
+   ========================================== */
 .simple-form {
   display: flex;
   flex-direction: column;
@@ -376,20 +233,34 @@ body {
 .form-group input,
 .form-group select {
   padding: 0.75rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color) !important;
   border-radius: var(--radius-md);
-  background-color: var(--bg-body);
-  color: var(--text-primary);
   font-size: 1rem;
   transition: border-color 0.2s;
   width: 100%;
+  /* Dark mode input fix */
+  color: #0f172a !important;
+  background-color: #ffffff !important;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--primary) !important;
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+input::placeholder {
+  color: #94a3b8 !important;
+}
+
+select option {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0); 
 }
 
 .simple-form button {
@@ -397,23 +268,98 @@ body {
   margin-top: var(--space-sm);
 }
 
-@media (min-width: 768px) {
-  .simple-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-md);
-    align-items: end; /* Button ko neeche align karega */
-  }
-  
-  .simple-form button {
-    grid-column: span 2;
-    justify-self: start;
-    width: auto;
-    padding: var(--space-sm) var(--space-lg); /* Button ko thoda bada karega */
-  }
+/* ==========================================
+   5. CATEGORY MANAGEMENT
+   ========================================== */
+.category-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
 }
 
-/* --- History Section --- */
+.warning-box {
+  background-color: var(--warning-bg);
+  color: #92400e;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  border: 1px solid #fcd34d;
+}
+
+#category-form-container {
+  background-color: var(--bg-body);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  border: 1px solid var(--border-color);
+}
+
+#new-category-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+#new-category-form input {
+  flex: 1; 
+  padding: 0.5rem; 
+  border: 1px solid var(--border-color); 
+  border-radius: var(--radius-md);
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.cat-item {
+  border: 1px solid var(--border-color);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-sm);
+}
+
+.cat-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.cat-info div {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.cat-name { font-weight: 600; }
+.cat-numbers { font-size: 0.8rem; color: var(--text-secondary); }
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--bg-surface-hover);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+.progress-fill.danger { background-color: var(--danger); }
+
+/* ==========================================
+   6. HISTORY SECTION
+   ========================================== */
 .history-item {
   display: flex;
   justify-content: space-between;
@@ -431,20 +377,9 @@ body {
   gap: var(--space-xs);
 }
 
-.history-item-title {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.history-item-meta {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-}
-
-.history-item-amount {
-  font-weight: 700;
-  font-size: 1.125rem;
-}
+.history-item-title { font-weight: 600; color: var(--text-primary); }
+.history-item-meta { font-size: 0.875rem; color: var(--text-muted); }
+.history-item-amount { font-weight: 700; font-size: 1.125rem; }
 .amount-income { color: var(--success); }
 .amount-expense { color: var(--danger); }
 
@@ -456,69 +391,52 @@ body {
   cursor: pointer;
   opacity: 0.5;
 }
-.delete-txn-btn:hover {
-  opacity: 1;
-}
+.delete-txn-btn:hover { opacity: 1; }
 
-/* --- Settings Section --- */
+/* ==========================================
+   7. SETTINGS & MODALS
+   ========================================== */
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-bottom: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
 .settings-group h3 {
   font-size: 1.125rem;
   font-weight: 600;
   margin-bottom: var(--space-xs);
 }
 #export-data-btn {
-  white-space: nowrap; /* Text ko ek line mein rakhega */
+  white-space: nowrap;
   padding: 0.6rem 1.2rem;
 }
 
-/* --- Theme Toggle Switch --- */
-.settings-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-/* Toggle ka wrapper */
+/* Theme Toggle */
 .theme-switch-wrapper {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   margin-bottom: var(--space-md);
 }
-
 .theme-switch {
   position: relative;
   display: inline-block;
   width: 50px;
   height: 28px;
-  margin-right: 10px; /* Text aur toggle ke beech gap */
+  margin-right: 10px;
 }
-
-.theme-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* Slider background */
+.theme-switch input { opacity: 0; width: 0; height: 0; }
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-color: #ccc;
   transition: .4s;
   border-radius: 34px;
 }
-
-/* Slider jab dark mode on ho */
-input:checked + .slider {
-  background-color: var(--primary);
-}
-
-/* Gola (Circle) */
+input:checked + .slider { background-color: var(--primary); }
 .slider:before {
   position: absolute;
   content: "";
@@ -530,92 +448,31 @@ input:checked + .slider {
   transition: .4s;
   border-radius: 50%;
 }
+input:checked + .slider:before { transform: translateX(22px); }
+[data-theme="dark"] .slider { background-color: #334155; }
+[data-theme="dark"] input:checked + .slider { background-color: var(--primary); }
 
-/* Gola right side pe shift hoga */
-input:checked + .slider:before {
-  transform: translateX(22px);
-}
-
-/* Dark mode ke liye slider background adjust (optional) */
-[data-theme="dark"] .slider {
-  background-color: #334155;
-}
-[data-theme="dark"] input:checked + .slider {
-  background-color: var(--primary);
-}
-
-/* --- Modals (Edit Popups) --- */
+/* Modals */
 .app-modal {
   margin: auto;
-  padding: var(--space-lg);
+  padding: var(--space-md);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   background-color: var(--bg-surface);
   color: var(--text-primary);
   box-shadow: var(--shadow-md);
-  width: 90%;
+  width: 95%;
   max-width: 400px;
 }
-
 .app-modal::backdrop {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
 }
+.app-modal h2 { font-size: 1.125rem; font-weight: 600; }
 
-.app-modal h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-/* --- Dark Mode Input Fix --- */
-input[type="text"],
-input[type="number"],
-input[type="date"],
-select,
-textarea {
-  color: #0f172a !important; /* Text ko hamesha dark (black) rakhega */
-  background-color: #ffffff; /* Input ka background hamesha white rakhega */
-}
-
-/* Placeholder text (jo "e.g. 3000" dikhta hai) ko thoda grey karo */
-input::placeholder {
-  color: #64748b !important;
-}
-
-/* Date picker icon ko black dikhne ke liye */
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0); 
-}
-
-/* --- Dark Mode Form Inputs & Select Fix --- */
-input[type="text"],
-input[type="number"],
-input[type="date"],
-select,
-textarea {
-  color: #0f172a !important;          /* Text hamesha black */
-  background-color: #ffffff !important; /* Background hamesha white */
-  border: 1px solid var(--border-color) !important;
-}
-
-/* Placeholder text (e.g. 3000) ko grey dikhane ke liye */
-input::placeholder {
-  color: #94a3b8 !important;
-}
-
-/* Dropdown list (options) ka background bhi white aur text black */
-select option {
-  color: #0f172a !important;
-  background-color: #ffffff !important;
-}
-
-/* Date picker icon ko dark dikhane ke liye */
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0); 
-}
-
-
-/* --- Savings Section --- */
+/* ==========================================
+   8. SAVINGS SECTION
+   ========================================== */
 .savings-hero {
   background: var(--bg-surface);
   border: 2px solid var(--primary);
@@ -625,14 +482,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: var(--shadow-md);
   text-align: center;
 }
-
 .savings-hero h2 {
   font-size: 1.25rem;
   color: var(--primary);
   margin-bottom: var(--space-sm);
   text-transform: uppercase;
 }
-
 .savings-main-amount {
   font-size: 3rem;
   font-weight: 700;
@@ -641,7 +496,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: block;
   margin-bottom: var(--space-md);
 }
-
 .savings-stats-row {
   display: flex;
   justify-content: space-around;
@@ -650,7 +504,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 0.9rem;
   color: var(--text-secondary);
 }
-
 .savings-card {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -661,31 +514,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   align-items: center;
   background: var(--bg-body);
 }
-
-.savings-card-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.savings-card-title {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.savings-card-meta {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-.savings-card-amount {
-  font-weight: 700;
-  font-size: 1.125rem;
-}
-
+.savings-card-info { display: flex; flex-direction: column; gap: 4px; }
+.savings-card-title { font-weight: 600; color: var(--text-primary); }
+.savings-card-meta { font-size: 0.8rem; color: var(--text-muted); }
+.savings-card-amount { font-weight: 700; font-size: 1.125rem; }
 .savings-card-amount.add { color: var(--success); }
 .savings-card-amount.use { color: var(--danger); }
-
 .delete-savings-btn {
   background: none;
   color: var(--danger);
@@ -694,6 +528,65 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
   opacity: 0.5;
 }
-.delete-savings-btn:hover {
-  opacity: 1;
+.delete-savings-btn:hover { opacity: 1; }
+
+/* ==========================================
+   9. DESKTOP OVERRIDES (Tablets & PCs)
+   ========================================== */
+@media (min-width: 768px) {
+  /* Navbar wapas right side */
+  .app-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .app-nav {
+    width: auto;
+    padding-bottom: 0;
+    overflow-x: visible;
+  }
+  
+  /* Buttons normal size */
+  .secondary-btn { width: auto; }
+  
+  /* Hero Card spacing */
+  .budget-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .budget-amount { font-size: 3.5rem; }
+  .budget-stats {
+    justify-content: flex-start;
+    gap: var(--space-xl);
+  }
+  
+  /* Forms Grid */
+  .simple-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    align-items: end;
+  }
+  .simple-form button {
+    grid-column: span 2;
+    justify-self: start;
+    width: auto;
+    padding: var(--space-sm) var(--space-lg);
+  }
+  
+  /* Category Layout */
+  .category-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #new-category-form { flex-direction: row; }
+  #new-category-form button { width: auto; }
+  .cat-info {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cat-info div { width: auto; }
 }
