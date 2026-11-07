@@ -256,6 +256,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (targetId === 'savings-section') {
           renderSavingsPage();
         }
+
+        if (targetId === 'dashboard-section') {
+          updateUI();
+        }
       }
     });
   });

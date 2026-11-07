@@ -230,6 +230,14 @@ body {
   color: var(--text-secondary);
 }
 
+/* Global Input Fix - Always black text on white background */
+input,
+select,
+textarea {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+}
+
 .form-group input,
 .form-group select {
   padding: 0.75rem;
@@ -238,9 +246,6 @@ body {
   font-size: 1rem;
   transition: border-color 0.2s;
   width: 100%;
-  /* Dark mode input fix */
-  color: #0f172a !important;
-  background-color: #ffffff !important;
 }
 
 .form-group input:focus,

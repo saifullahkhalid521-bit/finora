@@ -139,6 +139,19 @@ export function addSavings(type, amountPaise, date, description, periodId = null
 export function deleteSavings(savingsId) {
   if (!state.savingsLedger) return;
   state.savingsLedger = state.savingsLedger.filter(s => s.id !== savingsId);
+
+  // Dashboard savings ko ledger se recalculate karo
+  const currentPeriod = getCurrentPeriod();
+  if (currentPeriod) {
+    let totalAdded = 0;
+    let totalUsed = 0;
+    state.savingsLedger.forEach(s => {
+      if (s.type === 'added') totalAdded += s.amount;
+      else totalUsed += s.amount;
+    });
+    currentPeriod.savings = Math.max(0, totalAdded - totalUsed);
+  }
+
   commitState();
 }
 
