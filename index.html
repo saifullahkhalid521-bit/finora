@@ -19,9 +19,9 @@
     <nav class="app-nav">
       <button class="nav-btn active" data-target="dashboard-section">Dashboard</button>
       <button class="nav-btn" data-target="history-section">History</button>
+      <button class="nav-btn" data-target="savings-section">Savings</button>
       <button class="nav-btn primary-btn" data-target="form-section">+ Add</button>
       <button class="nav-btn" data-target="settings-section">Settings</button>
-      <button class="nav-btn" data-target="savings-section">Savings</button>
     </nav>
   </header>
 
@@ -49,11 +49,6 @@
           <div class="form-group">
             <label for="period-days">Period Duration (Days)</label>
             <input type="number" id="period-days" min="1" max="365" value="30" placeholder="e.g. 30" required>
-          </div>
-
-          <div class="form-group">
-            <label for="savings-amount">Savings Allocation (₹) - Optional</label>
-            <input type="number" id="savings-amount" step="0.01" min="0" placeholder="e.g. 2000">
           </div>
           
           <button type="submit" class="primary-btn">Create Period</button>

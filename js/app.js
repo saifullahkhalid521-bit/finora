@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startDate = document.getElementById('start-date').value;
     const days = parseInt(document.getElementById('period-days').value) || 30; 
     const budgetPaise = parseCurrencyToPaise(document.getElementById('total-budget').value);
-    const savingsPaise = document.getElementById('savings-amount').value ? parseCurrencyToPaise(document.getElementById('savings-amount').value) : 0;
+    const savingsPaise = 0; // Savings ab alag page se manage hongi
 
     if (budgetPaise <= 0) {
       alert("Budget must be greater than 0");
