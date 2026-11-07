@@ -1,7 +1,7 @@
 // app.js — Entry point
 import { setupBackup , setupSavingsBackup } from './backup.js';
 import { setupTheme } from './theme.js';
-import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction, updatePeriodBudget, updateCategoryAllocation, addSavings } from './state.js';
+import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction, updatePeriodBudget, updateCategoryAllocation, renameCategory, addSavings } from './state.js';
 import { renderDashboard } from './dashboard.js';
 import { renderHistory } from './history.js';
 import { renderSavingsPage } from './savings.js';
@@ -286,13 +286,15 @@ document.addEventListener('DOMContentLoaded', () => {
   editCategoryForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const catId = editCategoryForm.getAttribute('data-cat-id');
+    const newName = document.getElementById('edit-category-name').value.trim();
     const newAmountPaise = parseCurrencyToPaise(document.getElementById('edit-category-amount').value);
-    
-    if (!catId || newAmountPaise < 0) {
-      alert("Please enter a valid amount.");
+
+    if (!catId || !newName || newAmountPaise < 0) {
+      alert("Please enter a valid name and amount.");
       return;
     }
-    
+
+    renameCategory(catId, newName);
     updateCategoryAllocation(catId, newAmountPaise);
     document.getElementById('edit-category-modal').close();
     updateUI();

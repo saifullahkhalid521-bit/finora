@@ -91,13 +91,13 @@ export function renderDashboard(period, transactions, categories) {
       // Category Edit Button Logic
       const editCatBtn = catItem.querySelector('.edit-cat-btn');
       editCatBtn.addEventListener('click', () => {
-        document.getElementById('edit-category-name-display').textContent = `Category: ${category.name}`;
+        document.getElementById('edit-category-name').value = category.name;
         document.getElementById('edit-category-amount').value = allocated / 100;
-        
+
         // Current category ID ko form mein save kar lo
         const catForm = document.getElementById('edit-category-form');
-        catForm.setAttribute('data-cat-id', catId); 
-        
+        catForm.setAttribute('data-cat-id', catId);
+
         document.getElementById('edit-category-modal').showModal();
       });
 

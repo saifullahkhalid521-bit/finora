@@ -165,6 +165,15 @@ export function updatePeriodBudget(budgetPaise, savingsPaise) {
   commitState();
 }
 
+// Category rename karna
+export function renameCategory(categoryId, newName) {
+  const category = state.categories.find(c => c.id === categoryId);
+  if (!category) return false;
+  category.name = newName.trim();
+  commitState();
+  return true;
+}
+
 // Category allocation update karna
 export function updateCategoryAllocation(categoryId, amountPaise) {
   const currentPeriod = getCurrentPeriod();
