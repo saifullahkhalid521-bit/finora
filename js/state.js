@@ -186,3 +186,43 @@ export function updateCategoryAllocation(categoryId, amountPaise) {
   currentPeriod.categoryAllocations[categoryId] = amountPaise;
   commitState();
 }
+
+// 1. Naya backup vault mein save karna
+export function saveToVault(name, jsonData) {
+  if (!state.backupVault) state.backupVault = [];
+  
+  const newBackup = {
+    id: generateId('bak'),
+    name: name,
+    date: new Date().toISOString(),
+    data: jsonData // Poora data string format mein save hoga
+  };
+  
+  // Latest backup sabse upar
+  state.backupVault.unshift(newBackup);
+  
+  // Max 5 backups rakho (purane delete karte jao)
+  if (state.backupVault.length > 5) {
+    state.backupVault = state.backupVault.slice(0, 5);
+  }
+  
+  commitState();
+  return newBackup;
+}
+
+// 2. Vault se backup delete karna
+export function deleteFromVault(backupId) {
+  if (!state.backupVault) return;
+  state.backupVault = state.backupVault.filter(b => b.id !== backupId);
+  commitState();
+}
+
+// 3. Vault se wapas restore karna (ya koi naya backup add karna)
+export function restoreFromVault(backupDataString) {
+  const parsedData = JSON.parse(backupDataString);
+  if (!parsedData.version || !parsedData.periods) return false;
+  
+  // Purana data replace karo
+  localStorage.setItem('finora_data', JSON.stringify(parsedData));
+  return true;
+}

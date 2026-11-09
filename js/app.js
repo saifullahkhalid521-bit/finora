@@ -1,5 +1,5 @@
 // app.js — Entry point
-import { setupBackup , setupSavingsBackup } from './backup.js';
+import { setupBackup , setupSavingsBackup , renderVault } from './backup.js';
 import { setupTheme } from './theme.js';
 import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction, updatePeriodBudget, updateCategoryAllocation, renameCategory, addSavings } from './state.js';
 import { renderDashboard } from './dashboard.js';
@@ -302,6 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Setup Backup Buttons ---
   setupBackup();
+  renderVault();
   setupSavingsBackup();
    
   // --- Setup Theme ---

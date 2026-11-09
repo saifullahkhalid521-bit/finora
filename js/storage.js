@@ -16,7 +16,8 @@ const getDefaultData = () => ({
     { id: 'cat_misc', name: 'Misc', color: '#f59e0b', builtIn: false }
   ],
   transactions: [],
-  savingsLedger: []
+  savingsLedger: [],
+  backupVault: []
 });
 
 // Read data
