@@ -595,3 +595,50 @@ input:checked + .slider:before { transform: translateX(22px); }
   }
   .cat-info div { width: auto; }
 }
+
+/* --- Backup Vault --- */
+.vault-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.vault-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+}
+
+.vault-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.vault-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.vault-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.vault-actions {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.vault-actions button {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.btn-restore { background: var(--primary); color: white; border: none; }
+.btn-delete { background: transparent; color: var(--danger); border: 1px solid var(--danger); }

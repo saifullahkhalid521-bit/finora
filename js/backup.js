@@ -1,5 +1,5 @@
 // backup.js — Export & Import Logic
-import { getState, commitState } from './state.js';
+import { getState, commitState, saveToVault, deleteFromVault, restoreFromVault } from './state.js';
 
 export function setupBackup() {
   const exportBtn = document.getElementById('export-data-btn');
@@ -37,6 +37,9 @@ export function setupBackup() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+        // File download hone ke baad vault mein save karo
+    saveToVault(customName, dataStr);
+    renderVault(); // UI update karo
     URL.revokeObjectURL(url);
 
     document.getElementById('export-backup-modal').close();
@@ -80,6 +83,7 @@ export function setupBackup() {
       // Data load karo, savings nikaal lo, baaki khaali kar do
       const currentData = getState();
       const savingsToKeep = currentData.savingsLedger || [];
+      const vaultToKeep = currentData.backupVault || [];
 
       const freshData = {
         version: 1,
@@ -91,7 +95,8 @@ export function setupBackup() {
           { id: 'cat_misc', name: 'Misc', builtIn: false }
         ],
         transactions: [],
-        savingsLedger: savingsToKeep 
+        savingsLedger: savingsToKeep,
+        backupVault: vaultToKeep 
       };
 
       localStorage.setItem('finora_data', JSON.stringify(freshData));
@@ -163,5 +168,58 @@ export function setupSavingsBackup() {
       localStorage.setItem('finora_data', JSON.stringify(state));
       window.location.reload(true);
     }
+  });
+}
+
+// Vault UI render karna
+export function renderVault() {
+  const vaultList = document.getElementById('vault-list');
+  if (!vaultList) return;
+  
+  const state = getState();
+  const backups = state.backupVault || [];
+  
+  vaultList.innerHTML = '';
+  
+  if (backups.length === 0) {
+    vaultList.innerHTML = '<p class="placeholder-text" style="font-size:0.8rem;">No backups in vault yet.</p>';
+    return;
+  }
+
+  backups.forEach(backup => {
+    const date = new Date(backup.date).toLocaleDateString();
+    const item = document.createElement('div');
+    item.className = 'vault-item';
+    item.innerHTML = `
+      <div class="vault-info">
+        <span class="vault-name">${backup.name}.json</span>
+        <span class="vault-date">${date}</span>
+      </div>
+      <div class="vault-actions">
+        <button class="btn-restore" data-id="${backup.id}">Restore</button>
+        <button class="btn-delete" data-id="${backup.id}">Delete</button>
+      </div>
+    `;
+
+    // Restore Logic
+    item.querySelector('.btn-restore').addEventListener('click', () => {
+      if (confirm("This will overwrite your current data with this backup. Are you sure?")) {
+        if (restoreFromVault(backup.data)) {
+          window.location.reload();
+        } else {
+          alert("Invalid backup data.");
+        }
+      }
+    });
+
+    // Delete Logic
+    item.querySelector('.btn-delete').addEventListener('click', () => {
+      if (confirm("Delete this backup from vault permanently?")) {
+        deleteFromVault(backup.id);
+        renderVault();
+      }
+    });
+
+    vaultList.appendChild(item);
   });
 }
