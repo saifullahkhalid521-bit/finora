@@ -374,11 +374,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
 }); // <-- Main DOMContentLoaded end
 
-  // --- Register PWA Service Worker ---
+  // --- PWA Service Worker ---
+  // On localhost the cache is a liability: it can pin old modules and make a
+  // real fix look broken. Unregister + wipe caches there, register in prod.
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then(registration => console.log('ServiceWorker registered'))
-        .catch(err => console.log('ServiceWorker registration failed: ', err));
+    const isLocalDev = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+
+    window.addEventListener('load', async () => {
+      if (isLocalDev) {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map(r => r.unregister()));
+          if ('caches' in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map(k => caches.delete(k)));
+          }
+          console.log('Dev mode: service worker unregistered, caches cleared');
+        } catch (err) {
+          console.log('Dev cleanup failed: ', err);
+        }
+        return;
+      }
+
+      try {
+        const registration = await navigator.serviceWorker.register('./service-worker.js');
+
+        registration.addEventListener('updatefound', () => {
+          const worker = registration.installing;
+          if (worker) {
+            worker.addEventListener('statechange', () => {
+              if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                worker.postMessage('SKIP_WAITING');
+              }
+            });
+          }
+        });
+
+        console.log('ServiceWorker registered');
+      } catch (err) {
+        console.log('ServiceWorker registration failed: ', err);
+      }
+    });
+
+    // Reload once when a new worker takes over an already-controlled page,
+    // so a shipped fix is never half-applied.
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing || !navigator.serviceWorker.controller) return;
+      refreshing = true;
+      window.location.reload();
     });
   }

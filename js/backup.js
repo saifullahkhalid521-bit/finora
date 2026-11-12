@@ -1,5 +1,6 @@
 // backup.js — Export & Import Logic
 import { getState, commitState, saveToVault, deleteFromVault, restoreFromVault } from './state.js';
+import { saveData } from './storage.js';
 
 export function setupBackup() {
   const exportBtn = document.getElementById('export-data-btn');
@@ -27,25 +28,34 @@ export function setupBackup() {
     if (!customName) return;
 
     const data = getState();
-    const dataStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
+
+    // A backup is budget data — the Vault is device-local locker state, so it is
+    // stripped out of the snapshot. This makes it impossible for a restore to
+    // ever overwrite the Vault with a stale copy of itself.
+    const snapshot = { ...data, backupVault: [] };
+
+    const fileStr = JSON.stringify(snapshot, null, 2);   // readable, for the download
+    const blob = new Blob([fileStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    
+
     const a = document.createElement('a');
     a.href = url;
     a.download = `${customName}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-        // File download hone ke baad vault mein save karo
-    saveToVault(customName, dataStr);
-    renderVault(); // UI update karo
+
+    // Compact copy for localStorage (no vault nesting => payload stays flat)
+    if (!saveToVault(customName, JSON.stringify(snapshot))) {
+      console.warn('Backup saved to file but could not be added to the Vault (storage full).');
+    }
+    renderVault();
     URL.revokeObjectURL(url);
 
     document.getElementById('export-backup-modal').close();
   });
 
-  // 2. IMPORT DATA
+  // 2. IMPORT DATA (Keeps Vault safe)
   importBtn.addEventListener('click', () => {
     fileInput.click();
   });
@@ -64,8 +74,20 @@ export function setupBackup() {
           return;
         }
 
-        if (confirm("This will overwrite all current data. Are you sure?")) {
-          localStorage.setItem('finora_data', JSON.stringify(parsedData));
+        if (confirm("This will overwrite your budget data but keep your Vault safe. Are you sure?")) {
+          const currentState = getState();
+          // Deep copy: the imported object must never alias the live vault array.
+          const vaultToKeep = JSON.parse(JSON.stringify(currentState.backupVault || []));
+
+          parsedData.backupVault = vaultToKeep; // Vault preserve karo
+          if (!parsedData.settings || typeof parsedData.settings !== 'object') {
+            parsedData.settings = { currentPeriodId: null };
+          }
+          if (!Array.isArray(parsedData.categories)) parsedData.categories = [];
+          if (!Array.isArray(parsedData.transactions)) parsedData.transactions = [];
+          if (!Array.isArray(parsedData.savingsLedger)) parsedData.savingsLedger = [];
+
+          if (!saveData(parsedData)) return;
           alert("Backup imported successfully! Page will reload now.");
           window.location.reload();
         }
@@ -76,11 +98,10 @@ export function setupBackup() {
     reader.readAsText(file);
   });
 
-  // 3. RESET DATA (Independent from Savings)
+  // 3. RESET DATA (Independent from Savings & Vault)
   resetBtn.addEventListener('click', () => {
-    if (confirm("Are you absolutely sure? This will delete ALL your budget periods, categories, and transactions permanently. Your Savings history will be kept safe.")) {
+    if (confirm("Are you absolutely sure? This will delete ALL your budget periods, categories, and transactions permanently. Your Savings and Vault history will be kept safe.")) {
       
-      // Data load karo, savings nikaal lo, baaki khaali kar do
       const currentData = getState();
       const savingsToKeep = currentData.savingsLedger || [];
       const vaultToKeep = currentData.backupVault || [];
@@ -90,17 +111,17 @@ export function setupBackup() {
         settings: { currentPeriodId: null },
         periods: [],
         categories: [
-          { id: 'cat_personal', name: 'Personal', builtIn: false },
-          { id: 'cat_diet', name: 'Diet', builtIn: false },
-          { id: 'cat_misc', name: 'Misc', builtIn: false }
+          { id: 'cat_personal', name: 'Personal', color: '#4f46e5', builtIn: false },
+          { id: 'cat_diet', name: 'Diet', color: '#10b981', builtIn: false },
+          { id: 'cat_misc', name: 'Misc', color: '#f59e0b', builtIn: false }
         ],
         transactions: [],
         savingsLedger: savingsToKeep,
-        backupVault: vaultToKeep 
+        backupVault: vaultToKeep
       };
 
-      localStorage.setItem('finora_data', JSON.stringify(freshData));
-      window.location.reload(true);
+      if (!saveData(freshData)) return;
+      window.location.reload();
     }
   });
 }
@@ -187,33 +208,58 @@ export function renderVault() {
   }
 
   backups.forEach(backup => {
-    const date = new Date(backup.date).toLocaleDateString();
+    const dateValue = backup.date ? new Date(backup.date) : null;
+    const dateLabel = (dateValue && !isNaN(dateValue)) ? dateValue.toLocaleDateString() : 'Unknown date';
+
     const item = document.createElement('div');
     item.className = 'vault-item';
-    item.innerHTML = `
-      <div class="vault-info">
-        <span class="vault-name">${backup.name}.json</span>
-        <span class="vault-date">${date}</span>
-      </div>
-      <div class="vault-actions">
-        <button class="btn-restore" data-id="${backup.id}">Restore</button>
-        <button class="btn-delete" data-id="${backup.id}">Delete</button>
-      </div>
-    `;
 
-    // Restore Logic — passes backup ID; the backup file stays in the Vault
-    item.querySelector('.btn-restore').addEventListener('click', () => {
-      if (confirm("This will overwrite your current data with this backup. The backup file will remain in the Vault. Are you sure?")) {
+    const info = document.createElement('div');
+    info.className = 'vault-info';
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'vault-name';
+    nameEl.textContent = `${backup.name}.json`; // textContent: a backup name can never inject HTML
+
+    const dateEl = document.createElement('span');
+    dateEl.className = 'vault-date';
+    dateEl.textContent = dateLabel;
+
+    info.appendChild(nameEl);
+    info.appendChild(dateEl);
+
+    const actions = document.createElement('div');
+    actions.className = 'vault-actions';
+
+    const restoreBtn = document.createElement('button');
+    restoreBtn.className = 'btn-restore';
+    restoreBtn.dataset.id = backup.id;
+    restoreBtn.textContent = 'Restore';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn-delete';
+    deleteBtn.dataset.id = backup.id;
+    deleteBtn.textContent = 'Delete';
+
+    actions.appendChild(restoreBtn);
+    actions.appendChild(deleteBtn);
+
+    item.appendChild(info);
+    item.appendChild(actions);
+
+    // Restore: overwrites app data only. The backup itself stays in the Vault.
+    restoreBtn.addEventListener('click', () => {
+      if (confirm("This will restore this backup. Your Vault history will NOT be deleted. Continue?")) {
         if (restoreFromVault(backup.id)) {
           window.location.reload();
         } else {
-          alert("Invalid backup data.");
+          alert("Could not restore this backup. Nothing was changed.");
         }
       }
     });
 
-    // Delete Logic
-    item.querySelector('.btn-delete').addEventListener('click', () => {
+    // Delete: the ONLY code path that removes a backup from the Vault.
+    deleteBtn.addEventListener('click', () => {
       if (confirm("Delete this backup from vault permanently?")) {
         deleteFromVault(backup.id);
         renderVault();
