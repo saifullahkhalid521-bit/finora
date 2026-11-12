@@ -218,11 +218,34 @@ export function deleteFromVault(backupId) {
 }
 
 // 3. Vault se wapas restore karna (ya koi naya backup add karna)
-export function restoreFromVault(backupDataString) {
-  const parsedData = JSON.parse(backupDataString);
+export function restoreFromVault(backupId) {
+  if (!state.backupVault) return false;
+
+  // Vault mein se specific backup dhoondo
+  const backup = state.backupVault.find(b => b.id === backupId);
+  if (!backup) return false;
+
+  // Backup ka data string parse karo
+  let parsedData;
+  try {
+    parsedData = JSON.parse(backup.data);
+  } catch (error) {
+    console.error("Failed to parse backup data:", error);
+    return false;
+  }
+
   if (!parsedData.version || !parsedData.periods) return false;
-  
-  // Purana data replace karo
+
+  // CRITICAL STEP: Before overwriting current state, take the CURRENT vault
+  // and reassign it to the parsed data's backupVault property.
+  // This ensures the restored backup file REMAINS in the Vault (permanent locker)
+  // so the user can restore it again later or delete it manually.
+  parsedData.backupVault = state.backupVault;
+
+  // Merged object back to localStorage
   localStorage.setItem('finora_data', JSON.stringify(parsedData));
+
+  // In-memory state ko bhi update karo (reload se pehle consistency ke liye)
+  state = parsedData;
   return true;
 }

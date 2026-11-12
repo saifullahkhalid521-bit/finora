@@ -201,10 +201,10 @@ export function renderVault() {
       </div>
     `;
 
-    // Restore Logic
+    // Restore Logic — passes backup ID; the backup file stays in the Vault
     item.querySelector('.btn-restore').addEventListener('click', () => {
-      if (confirm("This will overwrite your current data with this backup. Are you sure?")) {
-        if (restoreFromVault(backup.data)) {
+      if (confirm("This will overwrite your current data with this backup. The backup file will remain in the Vault. Are you sure?")) {
+        if (restoreFromVault(backup.id)) {
           window.location.reload();
         } else {
           alert("Invalid backup data.");
