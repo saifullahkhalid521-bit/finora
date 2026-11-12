@@ -15,9 +15,10 @@ export function getState() {
   return state;
 }
 
-// Save current state to storage
+// Save current state to storage. Returns true when the write actually landed,
+// so callers can react instead of showing a success message over a failed save.
 export function commitState() {
-  saveData(state);
+  return saveData(state);
 }
 
 // Get specific period by ID
@@ -200,14 +201,10 @@ export function saveToVault(name, jsonData) {
   
   // Latest backup sabse upar
   state.backupVault.unshift(newBackup);
-  
-  // Max 5 backups rakho (purane delete karte jao)
-  if (state.backupVault.length > 5) {
-    state.backupVault = state.backupVault.slice(0, 5);
-  }
-  
-  commitState();
-  return newBackup;
+
+  // NOTE: yahan koi automatic trimming NAHI hai. Vault ek permanent locker hai —
+  // backup sirf tab hatega jab user khud deleteFromVault() chalaye.
+  return commitState() ? newBackup : null;
 }
 
 // 2. Vault se backup delete karna
@@ -217,12 +214,44 @@ export function deleteFromVault(backupId) {
   commitState();
 }
 
-// 3. Vault se wapas restore karna (ya koi naya backup add karna)
-export function restoreFromVault(backupDataString) {
-  const parsedData = JSON.parse(backupDataString);
-  if (!parsedData.version || !parsedData.periods) return false;
-  
-  // Purana data replace karo
-  localStorage.setItem('finora_data', JSON.stringify(parsedData));
+// Vault se wapas restore karna (backup Vault mein hi rehta hai)
+export function restoreFromVault(backupId) {
+  if (!Array.isArray(state.backupVault)) return false;
+
+  // 1. Backup dhundo
+  const backupToRestore = state.backupVault.find(b => b.id === backupId);
+  if (!backupToRestore) return false;
+
+  // 2. Data parse karo (corrupt entry crash na kare)
+  let parsedData;
+  try {
+    parsedData = JSON.parse(backupToRestore.data);
+  } catch (error) {
+    console.error("Corrupt backup data in vault:", backupId, error);
+    return false;
+  }
+
+  if (!parsedData || !parsedData.version || !Array.isArray(parsedData.periods)) return false;
+
+  // 3. Current vault ka deep copy pehle bacha lo, taaki restore ke baad
+  //    har backup (naya ya purana) Vault mein exactly waise hi rahe.
+  const currentVault = JSON.parse(JSON.stringify(state.backupVault));
+
+  // 4. Restored data ke saath current vault wapas jodo
+  parsedData.backupVault = currentVault;
+
+  // 5. Reserved fields ko sane defaults do
+  if (!parsedData.settings || typeof parsedData.settings !== 'object') {
+    parsedData.settings = { currentPeriodId: null };
+  }
+  if (!Array.isArray(parsedData.categories)) parsedData.categories = [];
+  if (!Array.isArray(parsedData.transactions)) parsedData.transactions = [];
+  if (!Array.isArray(parsedData.savingsLedger)) parsedData.savingsLedger = [];
+
+  // 6. localStorage pehle, memory baad mein — agar write fail ho to
+  //    UI ko jhooti success mat dikhao.
+  if (!saveData(parsedData)) return false;
+  state = parsedData;
+
   return true;
 }

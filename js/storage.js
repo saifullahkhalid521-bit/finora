@@ -45,12 +45,19 @@ export function loadData() {
   }
 }
 
-// Save data
+// Save data. Returns true on success, false when the write was rejected,
+// so callers never silently believe a change was persisted.
 export function saveData(data) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
   } catch (error) {
     console.error("Failed to save data to localStorage:", error);
-    alert("Storage full or unavailable! Changes might not be saved.");
+    const isQuota = error && (error.name === 'QuotaExceededError' ||
+      error.name === 'NS_ERROR_DOM_QUOTA_REACHED' || error.code === 22);
+    alert(isQuota
+      ? "Storage is full — this change was NOT saved.\nDelete old backups from the Vault, then try again."
+      : "Storage is unavailable — this change was NOT saved.");
+    return false;
   }
 }
