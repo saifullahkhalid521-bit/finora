@@ -24,6 +24,7 @@
       <button class="nav-btn" data-target="history-section">History</button>
       <button class="nav-btn" data-target="savings-section">Savings</button>
       <button class="nav-btn primary-btn" data-target="form-section">+ Add</button>
+      <button class="nav-btn" data-target="notes-section">Notes</button>
       <button class="nav-btn" data-target="settings-section">Settings</button>
     </nav>
   </header>
@@ -279,6 +280,18 @@
 
     </section>
 
+        <!-- Notes Section -->
+    <section id="notes-section" class="page-section">
+      <div class="category-header" style="margin-top: 0;">
+        <h2>My Notes & Plans</h2>
+        <button type="button" id="add-note-btn" class="primary-btn">+ Add New Note</button>
+      </div>
+
+      <!-- Notes List Container -->
+      <div id="notes-list" class="category-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-md);">
+        <!-- JS se cards render honge -->
+      </div>
+    </section>
   </main>
 
   <footer class="app-footer">
@@ -371,6 +384,28 @@
       <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-md);">
         <button type="submit" class="primary-btn" style="flex: 1;" id="savings-submit-btn">Save</button>
         <button type="button" class="secondary-btn" onclick="document.getElementById('savings-modal').close()" style="flex: 1;">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+  
+    <!-- Modal for Add/Edit Notes -->
+  <dialog id="note-modal" class="app-modal">
+    <form id="note-form" class="simple-form">
+      <h2 id="note-modal-title" style="margin-bottom: var(--space-md);">Add Note</h2>
+      
+      <div class="form-group">
+        <label for="note-title-input">Title</label>
+        <input type="text" id="note-title-input" placeholder="e.g. Future Plans or Lent Money" required>
+      </div>
+
+      <div class="form-group">
+        <label for="note-content-input">Content</label>
+        <textarea id="note-content-input" rows="4" placeholder="Write your note here..." required style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: white; color: black; font-family: inherit; resize: vertical;"></textarea>
+      </div>
+
+      <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-md);">
+        <button type="submit" class="primary-btn" style="flex: 1;">Save Note</button>
+        <button type="button" class="secondary-btn" onclick="document.getElementById('note-modal').close()" style="flex: 1;">Cancel</button>
       </div>
     </form>
   </dialog>
