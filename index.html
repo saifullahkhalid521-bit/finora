@@ -24,6 +24,7 @@
       <button class="nav-btn" data-target="history-section">History</button>
       <button class="nav-btn" data-target="savings-section">Savings</button>
       <button class="nav-btn primary-btn" data-target="form-section">+ Add</button>
+      <button class="nav-btn" data-target="notes-section">Notes</button>
       <button class="nav-btn" data-target="settings-section">Settings</button>
     </nav>
   </header>
@@ -279,6 +280,19 @@
 
     </section>
 
+        <!-- Notes Section -->
+    <section id="notes-section" class="page-section">
+      <div class="category-header" style="margin-top: 0;">
+        <h2>My Notes & Plans</h2>
+        <button type="button" id="add-note-btn" class="primary-btn">+ Add New Note</button>
+      </div>
+
+      <!-- Notes List Container -->
+      <div id="notes-list">
+        <!-- JS se cards render honge -->
+      </div>
+    </section>
+
   </main>
 
   <footer class="app-footer">
@@ -375,6 +389,40 @@
     </form>
   </dialog>
   
+   <!-- Modal for Add/Edit Notes -->
+  <dialog id="note-modal" class="app-modal">
+    <form id="note-form" style="display: flex; flex-direction: column; gap: var(--space-md);">
+      <h2 id="note-modal-title" style="margin-bottom: 0;">Add Note</h2>
+      
+      <div class="form-group">
+        <label for="note-title-input">Title</label>
+        <input type="text" id="note-title-input" placeholder="e.g. Future Plans" required>
+      </div>
+
+      <div class="form-group">
+        <label for="note-content-input">Content</label>
+        <textarea id="note-content-input" rows="5" placeholder="Write your note here..." required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: white; color: black; font-family: inherit; resize: vertical;"></textarea>
+      </div>
+
+            <!-- Action Buttons (With Icons) -->
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-sm); margin-top: var(--space-xs);">
+        <button type="button" class="secondary-btn" onclick="document.getElementById('note-modal').close()" style="width: auto; padding: 0.5rem 1rem;">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 4px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          Cancel
+        </button>
+        <button type="submit" class="primary-btn" style="width: auto; padding: 0.5rem 1.25rem;">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 4px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+          </svg>
+          Save
+        </button>
+      </div>
+     
+    </form>
+  </dialog>
+
   <script type="module" src="js/app.js"></script>
 
 </body>

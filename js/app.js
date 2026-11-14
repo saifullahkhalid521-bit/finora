@@ -1,7 +1,7 @@
 // app.js — Entry point
 import { setupBackup , setupSavingsBackup , renderVault } from './backup.js';
 import { setupTheme } from './theme.js';
-import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction, updatePeriodBudget, updateCategoryAllocation, renameCategory, addSavings } from './state.js';
+import { getState, createPeriod, addCategoryAllocation, addCustomCategory, addTransaction, updatePeriodBudget, updateCategoryAllocation, renameCategory, addSavings, addNote, updateNote, deleteNote } from './state.js';
 import { renderDashboard } from './dashboard.js';
 import { renderHistory } from './history.js';
 import { renderSavingsPage } from './savings.js';
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startDate = document.getElementById('start-date').value;
     const days = parseInt(document.getElementById('period-days').value) || 30; 
     const budgetPaise = parseCurrencyToPaise(document.getElementById('total-budget').value);
-    const savingsPaise = 0; // Savings ab alag page se manage hongi
+    const savingsPaise = 0; 
 
     if (budgetPaise <= 0) {
       alert("Budget must be greater than 0");
@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Dashboard update listener ---
   document.addEventListener('transactionUpdated', () => {
-    updateUI(); // <-- Ye wapas add kar diya
+    updateUI(); 
   });
 
   // Initial Render
@@ -255,6 +255,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (targetId === 'savings-section') {
           renderSavingsPage();
+        }
+
+        if (targetId === 'notes-section') {
+          renderNotes();
         }
 
         if (targetId === 'dashboard-section') {
@@ -354,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-        // Current period ki savings ko bhi update karo
+    // Current period ki savings ko bhi update karo
     const currentPeriod = getState().periods.find(p => p.id === getState().settings.currentPeriodId);
     if (currentPeriod) {
       let currentSavings = currentPeriod.savings || 0;
@@ -372,56 +376,154 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUI();
   });
 
-}); // <-- Main DOMContentLoaded end
 
-  // --- PWA Service Worker ---
-  // On localhost the cache is a liability: it can pin old modules and make a
-  // real fix look broken. Unregister + wipe caches there, register in prod.
-  if ('serviceWorker' in navigator) {
-    const isLocalDev = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+  // --- Notes Logic (Moved Outside Savings Form) ---
+  const noteModal = document.getElementById('note-modal');
+  const noteForm = document.getElementById('note-form');
+  const noteModalTitle = document.getElementById('note-modal-title');
+  let editingNoteId = null;
 
-    window.addEventListener('load', async () => {
-      if (isLocalDev) {
-        try {
-          const registrations = await navigator.serviceWorker.getRegistrations();
-          await Promise.all(registrations.map(r => r.unregister()));
-          if ('caches' in window) {
-            const keys = await caches.keys();
-            await Promise.all(keys.map(k => caches.delete(k)));
+  document.getElementById('add-note-btn').addEventListener('click', () => {
+    editingNoteId = null;
+    noteModalTitle.textContent = 'Add Note';
+    noteForm.reset();
+    noteModal.showModal();
+  });
+
+  noteForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = document.getElementById('note-title-input').value.trim();
+    const content = document.getElementById('note-content-input').value.trim();
+
+    if (!title || !content) return;
+
+    if (editingNoteId) {
+      updateNote(editingNoteId, title, content);
+    } else {
+      addNote(title, content);
+    }
+
+    noteModal.close();
+    renderNotes();
+  });
+
+  // Notes ko screen pe render karna
+  window.renderNotes = function() {
+    const notesList = document.getElementById('notes-list');
+    if (!notesList) return;
+
+    const state = getState();
+    const notes = state.notes || [];
+    
+    notesList.innerHTML = '';
+
+    if (notes.length === 0) {
+      notesList.innerHTML = '<p class="placeholder-text">No notes added yet. Click "+ Add New Note" to write down your plans or reminders.</p>';
+      return;
+    }
+
+    // Latest notes pehle
+    const sortedNotes = [...notes].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    sortedNotes.forEach(note => {
+      const dateStr = new Date(note.date).toLocaleDateString();
+      const card = document.createElement('div');
+      card.className = 'note-card';
+      
+      // textContent use kiya hai taaki user ka likha hua HTML execute na ho (XSS safety)
+      card.innerHTML = `
+        <div class="note-card-title"></div>
+        <div class="note-card-date">Updated: ${dateStr}</div>
+        <div class="note-card-content"></div>
+                <div class="note-card-actions">
+          <button class="note-btn-edit">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 4px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+            </svg>
+            Edit
+          </button>
+          <button class="note-btn-delete">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 4px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            Delete
+          </button>
+        </div>
+      `;
+
+      // Data safely inject karo
+      card.querySelector('.note-card-title').textContent = note.title;
+      card.querySelector('.note-card-content').textContent = note.content;
+
+      // Edit Button
+      card.querySelector('.note-btn-edit').addEventListener('click', () => {
+        editingNoteId = note.id;
+        noteModalTitle.textContent = 'Edit Note';
+        document.getElementById('note-title-input').value = note.title;
+        document.getElementById('note-content-input').value = note.content;
+        noteModal.showModal();
+      });
+
+      // Delete Button (Double Confirmation)
+      card.querySelector('.note-btn-delete').addEventListener('click', () => {
+        if (confirm("Are you sure you want to delete this note?")) {
+          if (confirm("This action cannot be undone. Please confirm again to delete.")) {
+            deleteNote(note.id);
+            renderNotes();
           }
-          console.log('Dev mode: service worker unregistered, caches cleared');
-        } catch (err) {
-          console.log('Dev cleanup failed: ', err);
         }
-        return;
-      }
+      });
 
-      try {
-        const registration = await navigator.serviceWorker.register('./service-worker.js');
-
-        registration.addEventListener('updatefound', () => {
-          const worker = registration.installing;
-          if (worker) {
-            worker.addEventListener('statechange', () => {
-              if (worker.state === 'installed' && navigator.serviceWorker.controller) {
-                worker.postMessage('SKIP_WAITING');
-              }
-            });
-          }
-        });
-
-        console.log('ServiceWorker registered');
-      } catch (err) {
-        console.log('ServiceWorker registration failed: ', err);
-      }
-    });
-
-    // Reload once when a new worker takes over an already-controlled page,
-    // so a shipped fix is never half-applied.
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (refreshing || !navigator.serviceWorker.controller) return;
-      refreshing = true;
-      window.location.reload();
+      notesList.appendChild(card);
     });
   }
+
+}); // <-- Main DOMContentLoaded end
+
+// --- PWA Service Worker ---
+if ('serviceWorker' in navigator) {
+  const isLocalDev = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+
+  window.addEventListener('load', async () => {
+    if (isLocalDev) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map(r => r.unregister()));
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+        }
+        console.log('Dev mode: service worker unregistered, caches cleared');
+      } catch (err) {
+        console.log('Dev cleanup failed: ', err);
+      }
+      return;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.register('./service-worker.js');
+
+      registration.addEventListener('updatefound', () => {
+        const worker = registration.installing;
+        if (worker) {
+          worker.addEventListener('statechange', () => {
+            if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+              worker.postMessage('SKIP_WAITING');
+            }
+          });
+        }
+      });
+
+      console.log('ServiceWorker registered');
+    } catch (err) {
+      console.log('ServiceWorker registration failed: ', err);
+    }
+  });
+
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshing || !navigator.serviceWorker.controller) return;
+    refreshing = true;
+    window.location.reload();
+  });
+}
