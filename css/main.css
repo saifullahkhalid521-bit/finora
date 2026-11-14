@@ -642,3 +642,57 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 .btn-restore { background: var(--primary); color: white; border: none; }
 .btn-delete { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+
+
+/* --- Notes Page --- */
+.note-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.note-card-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--primary);
+  margin-bottom: var(--space-xs);
+}
+
+.note-card-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--space-xs);
+}
+
+.note-card-content {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  white-space: pre-wrap; /* Line breaks respect karega */
+  flex: 1;
+}
+
+.note-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+.note-card-actions button {
+  background: transparent;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.note-btn-edit { color: var(--primary); border: 1px solid var(--primary); }
+.note-btn-delete { color: var(--danger); border: 1px solid var(--danger); }

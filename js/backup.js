@@ -105,7 +105,8 @@ export function setupBackup() {
       const currentData = getState();
       const savingsToKeep = currentData.savingsLedger || [];
       const vaultToKeep = currentData.backupVault || [];
-
+      const notesToKeep = currentData.notes || [];
+      
       const freshData = {
         version: 1,
         settings: { currentPeriodId: null },
@@ -117,7 +118,8 @@ export function setupBackup() {
         ],
         transactions: [],
         savingsLedger: savingsToKeep,
-        backupVault: vaultToKeep
+        backupVault: vaultToKeep,
+        notes: notesToKeep,
       };
 
       if (!saveData(freshData)) return;
