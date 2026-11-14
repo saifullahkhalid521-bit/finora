@@ -644,39 +644,61 @@ input:checked + .slider:before { transform: translateX(22px); }
 .btn-delete { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
 
 
-/* --- Notes Page --- */
+/* --- Notes Page Polish --- */
+#notes-section {
+  overflow-x: hidden; /* Long text se page ko break hone se bachayega */
+}
+
+#notes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-md);
+  align-items: start; /* Cards ko upar align rakhega */
+}
+
 .note-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   box-shadow: var(--shadow-sm);
-  position: relative;
+  /* Remove any overflow */
+  max-width: 100%;
+  overflow: hidden; 
 }
 
 .note-card-title {
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--primary);
-  margin-bottom: var(--space-xs);
+  /* Long words break */
+  word-break: break-word; 
 }
 
 .note-card-date {
   font-size: 0.75rem;
   color: var(--text-muted);
-  margin-bottom: var(--space-sm);
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: var(--space-xs);
+  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
 }
 
 .note-card-content {
   font-size: 0.9rem;
   color: var(--text-primary);
-  white-space: pre-wrap; /* Line breaks respect karega */
-  flex: 1;
+  line-height: 1.5;
+  
+  /* 🔥 SABSE IMPORTANT FIX: Long text wrap ho, bahar na nikle */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-all;
+  
+  /* Max height with scroll */
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .note-card-actions {
@@ -684,15 +706,100 @@ input:checked + .slider:before { transform: translateX(22px); }
   justify-content: flex-end;
   gap: var(--space-sm);
   margin-top: var(--space-sm);
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--space-sm);
 }
 
 .note-card-actions button {
   background: transparent;
-  font-size: 0.8rem;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
   cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;          /* Icon aur text align karne ke liye */
+  align-items: center;    /* Center align */
+  justify-content: center;
+  gap: 4px;               /* Icon aur text ke beech gap */
 }
 
-.note-btn-edit { color: var(--primary); border: 1px solid var(--primary); }
-.note-btn-delete { color: var(--danger); border: 1px solid var(--danger); }
+.note-btn-edit { 
+  color: var(--primary); 
+  border: 1px solid var(--primary); 
+}
+.note-btn-edit:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.note-btn-delete { 
+  color: var(--danger); 
+  border: 1px solid var(--danger); 
+}
+.note-btn-delete:hover {
+  background: var(--danger);
+  color: white;
+}
+
+/* Modal Textarea Fix (Long text aur overflow ko rokne ke liye) */
+#note-content-input {
+  width: 100% !important;
+  max-width: 100%;
+  box-sizing: border-box;
+  resize: vertical; /* User height badha sakta hai */
+  min-height: 120px;
+  max-height: 300px;
+  line-height: 1.5;
+  font-family: inherit;
+}
+
+/* Note Header (Heading aur Button alignment) */
+#notes-section .category-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+#notes-section .category-header h2 {
+  margin-bottom: 0;
+}
+
+/* Mobile responsiveness fix */
+@media (max-width: 767px) {
+  #notes-list {
+    grid-template-columns: 1fr; /* Mobile pe full width */
+  }
+  #add-note-btn {
+    width: 100%;
+  }
+}
+
+/* Desktop pe heading aur button ek line mein right side */
+@media (min-width: 768px) {
+  #notes-section .category-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/* --- Note Modal Specific Fixes --- */
+#note-form .form-group {
+  margin-bottom: 0; /* Purana gap hataya */
+}
+
+#note-form label {
+  margin-bottom: 4px; /* Label aur input ke beech gap */
+  display: block;
+}
+
+#note-form button {
+  font-size: 0.875rem; /* Buttons ka text chhota kiya */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
