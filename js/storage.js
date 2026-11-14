@@ -17,7 +17,8 @@ const getDefaultData = () => ({
   ],
   transactions: [],
   savingsLedger: [],
-  backupVault: []
+  backupVault: [],
+  notes: [],
 });
 
 // Read data

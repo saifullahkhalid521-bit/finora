@@ -255,3 +255,37 @@ export function restoreFromVault(backupId) {
 
   return true;
 }
+
+// --- NOTES FUNCTIONS ---
+
+// Naya note add karna
+export function addNote(title, content) {
+  if (!state.notes) state.notes = [];
+  const newNote = {
+    id: generateId('note'),
+    title: title,
+    content: content,
+    date: new Date().toISOString()
+  };
+  state.notes.push(newNote);
+  commitState();
+  return newNote;
+}
+
+// Note update karna
+export function updateNote(noteId, newTitle, newContent) {
+  const note = state.notes.find(n => n.id === noteId);
+  if (!note) return false;
+  note.title = newTitle;
+  note.content = newContent;
+  note.date = new Date().toISOString(); // Update time
+  commitState();
+  return true;
+}
+
+// Note delete karna
+export function deleteNote(noteId) {
+  if (!state.notes) return;
+  state.notes = state.notes.filter(n => n.id !== noteId);
+  commitState();
+}
